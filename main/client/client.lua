@@ -1,0 +1,1868 @@
+Framework = nil
+Framework = GetFramework()
+
+Citizen.CreateThread(function()
+    while Framework == nil do Citizen.Wait(750) end
+    Citizen.Wait(2500)
+end)
+
+Callback = Config.Framework == "ESX" or Config.Framework == "NewESX" and Framework.TriggerServerCallback or Framework.Functions.TriggerCallback
+
+
+RegisterKeyMapping('eyestore', 'Open Eyes Menu', 'keyboard', 'J')
+
+local isPhoneOpen = false
+local phoneProp = nil
+local phoneModel = `prop_npc_phone_02`
+local currentAnimDict = "cellphone@"
+local currentAnim = "cellphone_text_read_base"
+
+local currentWaypoint = nil
+
+local atmModels = {
+    `prop_atm_01`,
+    `prop_atm_02`,
+    `prop_atm_03`,
+    `prop_fleeca_atm`
+}
+
+local robbedATMs = {}
+
+local activeHackMarker = nil
+local activeHackBlip = nil
+
+local activeRobberyMarkers = {}
+
+local moneyPropModels = {
+    `prop_anim_cash_pile_01`,
+    `prop_cash_pile_01`,
+    `prop_cash_pile_02`
+}
+
+local activeMoneyProps = {}
+
+_G.activeMoneyProps = {}
+_G.robbedATMs = {}
+_G.activeRobberyMarkers = {}
+
+local alternativeMoneyProps = {
+    `prop_money_bag_01`,
+    `prop_cash_case_01`,
+    `prop_cash_case_02`,
+    `prop_cash_crate_01`,
+    `bkr_prop_money_wrapped_01`,
+    `bkr_prop_moneypack_01a`,
+    `bkr_prop_moneypack_03a`
+}
+
+local function loadAnimDict(dict)
+    while not HasAnimDictLoaded(dict) do
+        RequestAnimDict(dict)
+        Wait(5)
+    end
+end
+
+local function deletePhone()
+    if phoneProp ~= nil then
+        DeleteObject(phoneProp)
+        phoneProp = nil
+    end
+end
+
+local function createPhone()
+    deletePhone()
+    local ped = PlayerPedId()
+    local x,y,z = table.unpack(GetEntityCoords(ped))
+    
+    RequestModel(phoneModel)
+    while not HasModelLoaded(phoneModel) do
+        Wait(1)
+    end
+    
+    phoneProp = CreateObject(phoneModel, x, y, z + 0.2, true, true, true)
+    local bone = GetPedBoneIndex(ped, 28422)
+    AttachEntityToEntity(phoneProp, ped, bone, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true, true, false, true, 1, true)
+    SetModelAsNoLongerNeeded(phoneModel)
+end
+
+local function phoneAnim()
+    local ped = PlayerPedId()
+    loadAnimDict(currentAnimDict)
+    TaskPlayAnim(ped, currentAnimDict, currentAnim, 3.0, -1, -1, 50, 0, false, false, false)
+end
+
+local function removePhoneAnim()
+    local ped = PlayerPedId()
+    StopAnimTask(ped, currentAnimDict, currentAnim, 1.0)
+end
+
+RegisterCommand('eyestore', function()
+    if not isPhoneOpen then
+        isPhoneOpen = true
+        
+        createPhone()
+        phoneAnim()
+
+        Callback('BlackMarket', function(items)
+
+            Config['Black Market Items'] = items.items
+
+            SendNUIMessage({
+                data = 'PHONE',
+                open = true,
+                shared = Config
+            })
+            
+            SetNuiFocus(true, true)
+            SetNuiFocusKeepInput(true)
+
+        end)
+
+        
+        Citizen.CreateThread(function()
+            while isPhoneOpen do
+                DisableControlAction(0, 199, true)
+                DisableControlAction(0, 200, true)
+                DisableControlAction(0, 202, true)
+                DisableControlAction(0, 177, true)
+                DisableControlAction(0, 322, true)
+                DisableControlAction(0, 244, true)
+                
+                DisableControlAction(0, 24, true)
+                DisableControlAction(0, 25, true)
+                DisableControlAction(0, 140, true)
+                DisableControlAction(0, 141, true)
+                DisableControlAction(0, 142, true)
+                DisableControlAction(0, 257, true)
+                DisableControlAction(0, 263, true)
+                DisableControlAction(0, 264, true)
+                
+                EnableControlAction(0, 30, true)
+                EnableControlAction(0, 31, true)
+                EnableControlAction(0, 32, true)
+                EnableControlAction(0, 33, true)
+                EnableControlAction(0, 34, true)
+                EnableControlAction(0, 35, true)
+                EnableControlAction(0, 44, true)
+                EnableControlAction(0, 20, true)
+                EnableControlAction(0, 21, true)
+                EnableControlAction(0, 22, true)
+                EnableControlAction(0, 23, true)
+                
+                if IsControlJustPressed(0, 200) or IsControlJustPressed(0, 322) or IsControlJustPressed(0, 177) then
+                    TriggerEvent("eyestore:closePhone")
+                end
+                
+                Citizen.Wait(0)
+            end
+        end)
+    end
+end)
+
+RegisterNUICallback('Close', function()
+    if isPhoneOpen then
+        SetNuiFocus(false, false)
+        SetNuiFocusKeepInput(false)
+        
+        removePhoneAnim()
+        Wait(500)
+        deletePhone()
+        
+        SendNUIMessage({
+            data = 'PHONE',
+            open = false,
+        })
+        
+        BeginScaleformMovieMethodOnFrontend("DISPLAY_MENU")
+        ScaleformMovieMethodAddParamBool(false)
+        EndScaleformMovieMethod()
+        
+        SetNuiFocusKeepInput(false)
+        isPhoneOpen = false
+        
+        Citizen.CreateThread(function()
+            local disablePauseTime = GetGameTimer() + 1000
+            
+            while GetGameTimer() < disablePauseTime do
+                DisableControlAction(0, 199, true)
+                DisableControlAction(0, 200, true)
+                DisableControlAction(0, 202, true)
+                DisableControlAction(0, 177, true)
+                DisableControlAction(0, 322, true)
+                DisableControlAction(0, 244, true)
+                
+                if IsControlJustPressed(0, 199) or IsControlJustPressed(0, 200) or IsControlJustPressed(0, 322) then
+                    PauseCancelScriptedConversation()
+                    SetPauseMenuActive(false)
+                end
+                
+                Citizen.Wait(0)
+            end
+        end)
+    end
+end)
+
+AddEventHandler('onResourceStop', function(resourceName)
+    if (GetCurrentResourceName() ~= resourceName) then
+        return
+    end
+    
+    if isPhoneOpen then
+        removePhoneAnim()
+        deletePhone()
+    end
+    
+    for id, markerData in pairs(activeRobberyMarkers) do
+        if markerData.blip then
+            RemoveBlip(markerData.blip)
+        end
+        clearMoneyProps(id)
+    end
+    activeRobberyMarkers = {}
+end)
+
+AddEventHandler('gameEventTriggered', function(name, args)
+    if name == 'CEventNetworkEntityDamage' then
+        local victim = args[1]
+        local isDead = args[4] == 1
+        
+        if victim == PlayerPedId() and isDead and isPhoneOpen then
+            removePhoneAnim()
+            deletePhone()
+            SetNuiFocus(false, false)
+            SendNUIMessage({
+                data = 'PHONE',
+                open = false,
+            })
+            isPhoneOpen = false
+        end
+    end
+end)
+
+RegisterNUICallback('Robery', function(data, cb)
+    if not data or not data.amount or data.amount <= 0 then
+        print("Invalid robbery data!")
+        cb({ success = false, message = 'Invalid robbery data!' })
+        return
+    end
+    
+    print("Robbery data received:", json.encode(data))
+    print("Amount:", data.amount)
+    print("ATM ID:", data.atmId)
+    
+    TriggerServerEvent('hackphone:giveATMMoney', data)
+    
+    cb({ success = true, message = 'Robbery completed! You earned $' .. data.amount .. '!' })
+end)
+
+_G.EnumerateVehicles = function()
+    return coroutine.wrap(function()
+        local handle, vehicle = FindFirstVehicle()
+        local success = (handle ~= nil and vehicle ~= nil)
+        
+        if not success then
+            if handle then EndFindVehicle(handle) end
+            return
+        end
+        
+        local hasNext = true
+        repeat
+            coroutine.yield(vehicle)
+            hasNext, vehicle = FindNextVehicle(handle)
+        until not hasNext
+        
+        EndFindVehicle(handle)
+    end)
+end
+
+function GetVehicleByPlate(plate)
+    if not plate then
+        print("No plate specified!")
+        return nil
+    end
+    
+    local cleanPlate = string.gsub(plate, "%s+", "")
+    
+    local vehicles = GetGamePool('CVehicle')
+    
+    print("Searching for plate: " .. cleanPlate)
+    print("Number of vehicles found: " .. #vehicles)
+    
+    for _, vehicle in ipairs(vehicles) do
+        local vehiclePlate = GetVehicleNumberPlateText(vehicle)
+        
+        vehiclePlate = string.gsub(vehiclePlate, "%s+", "")
+        
+        print("Checking vehicle plate: " .. vehiclePlate)
+        
+        if string.lower(vehiclePlate) == string.lower(cleanPlate) then
+            print("Vehicle found: " .. vehicle)
+            return vehicle
+        end
+    end
+    
+    for vehicle in EnumerateVehicles() do
+        if DoesEntityExist(vehicle) then
+            local vehiclePlate = GetVehicleNumberPlateText(vehicle)
+            vehiclePlate = string.gsub(vehiclePlate, "%s+", "")
+            
+            if string.lower(vehiclePlate) == string.lower(cleanPlate) then
+                print("Vehicle found with alternative method: " .. vehicle)
+                return vehicle
+            end
+        end
+    end
+    
+    print("Vehicle not found: " .. cleanPlate)
+    return nil
+end
+
+RegisterNUICallback('vehicleAction', function(data, cb)
+    local action = data.action
+    local playerPed = PlayerPedId()
+    
+    if action == 'scan' then
+        local playerCoords = GetEntityCoords(playerPed)
+        local vehicles = {}
+        local handle, vehicle = FindFirstVehicle()
+        local success = true
+        
+        repeat
+            if DoesEntityExist(vehicle) then
+                local vehicleCoords = GetEntityCoords(vehicle)
+                local distance = #(playerCoords - vehicleCoords)
+                
+                if distance <= 20.0 then
+                    local vehicleModel = GetEntityModel(vehicle)
+                    local vehicleName = GetLabelText(GetDisplayNameFromVehicleModel(vehicleModel))
+                    if vehicleName == "NULL" or vehicleName == "" then 
+                        vehicleName = GetDisplayNameFromVehicleModel(vehicleModel)
+                    end
+                    local vehiclePlate = GetVehicleNumberPlateText(vehicle)
+                    local doorStatus = GetVehicleDoorLockStatus(vehicle) == 2 and "Locked" or "Unlocked"
+                    
+                    local vehicleHealth = GetVehicleBodyHealth(vehicle)
+                    local engineHealth = GetVehicleEngineHealth(vehicle)
+                    local isDestroyed = vehicleHealth < 100 or engineHealth < 100
+                    
+                    local engineRunning = GetIsVehicleEngineRunning(vehicle)
+                    local lightsState = GetVehicleLightsState(vehicle)
+                    local lightsOn = lightsState == 2
+                    
+                    table.insert(vehicles, {
+                        id = tostring(NetworkGetNetworkIdFromEntity(vehicle)),
+                        name = vehicleName,
+                        plate = vehiclePlate,
+                        model = string.lower(vehicleName),
+                        status = doorStatus,
+                        distance = math.floor(distance) .. "m",
+                        health = vehicleHealth,
+                        engineHealth = engineHealth,
+                        isDestroyed = isDestroyed,
+                        engineRunning = engineRunning,
+                        lightsOn = lightsOn
+                    })
+                end
+            end
+            
+            success, vehicle = FindNextVehicle(handle)
+        until not success
+        
+        EndFindVehicle(handle)
+        
+        print("Number of vehicles found: " .. #vehicles)
+        for _, v in ipairs(vehicles) do
+            print(string.format("Vehicle: %s, Plate: %s, Distance: %s, Engine: %s, Lights: %s", 
+                v.name, v.plate, v.distance, tostring(v.engineRunning), tostring(v.lightsOn)))
+        end
+        
+        cb({vehicles = vehicles})
+    
+    elseif action == 'getVehicleLocation' then
+        local vehicle = GetVehicleByPlate(data.plate)
+        
+        if DoesEntityExist(vehicle) then
+            local vehicleCoords = GetEntityCoords(vehicle)
+            local streetHash = GetStreetNameAtCoord(vehicleCoords.x, vehicleCoords.y, vehicleCoords.z)
+            local streetName = GetStreetNameFromHashKey(streetHash)
+            
+            local coordsString = string.format("%.1f, %.1f, %.1f", vehicleCoords.x, vehicleCoords.y, vehicleCoords.z)
+            
+            cb({
+                success = true,
+                coords = coordsString,
+                location = streetName
+            })
+        else
+            cb({success = false})
+        end
+    
+    elseif action == 'markLocation' then
+        local coords = data.coords
+        local remove = data.remove or false
+        
+        if remove then
+            if currentBlip and DoesBlipExist(currentBlip) then
+                RemoveBlip(currentBlip)
+                currentBlip = nil
+                cb({status = 'removed'})
+                return
+            end
+            cb({status = 'error', message = 'No marker to remove'})
+            return
+        end
+        
+        if coords then
+            local x, y, z = string.match(coords, "([^,]+), ([^,]+), ([^,]+)")
+            x, y, z = tonumber(x), tonumber(y), tonumber(z)
+            
+            if x and y and z then
+                if currentBlip and DoesBlipExist(currentBlip) then
+                    RemoveBlip(currentBlip)
+                    currentBlip = nil
+                end
+                
+                currentBlip = AddBlipForCoord(x, y, z)
+                SetBlipSprite(currentBlip, 161)
+                SetBlipColour(currentBlip, 5)
+                SetBlipScale(currentBlip, 1.0)
+                SetBlipAsShortRange(currentBlip, false)
+                BeginTextCommandSetBlipName("STRING")
+                AddTextComponentString("Tracked Location")
+                EndTextCommandSetBlipName(currentBlip)
+                
+                SetBlipRoute(currentBlip, true)
+                SetBlipRouteColour(currentBlip, 5)
+                
+                cb({status = 'marked'})
+            else
+                print("Koordinat dönüşüm hatası:", coords)
+                cb({status = 'error', message = 'Invalid coordinates format'})
+            end
+        else
+            cb({status = 'error', message = 'No coordinates provided'})
+        end
+    
+    elseif action == 'door' then
+        local vehicle = nil
+        local handle, veh = FindFirstVehicle()
+        local success = true
+        
+        repeat
+            if DoesEntityExist(veh) and GetVehicleNumberPlateText(veh) == data.plate then
+                vehicle = veh
+                break
+            end
+            success, veh = FindNextVehicle(handle)
+        until not success
+        
+        EndFindVehicle(handle)
+        
+        if DoesEntityExist(vehicle) then
+            local doorIndex = tonumber(data.doorIndex)
+            if doorIndex and doorIndex >= 0 and doorIndex <= 5 then
+                local currentDoorState = GetVehicleDoorAngleRatio(vehicle, doorIndex) > 0.0
+                
+                if data.state then
+                    if not currentDoorState then
+                        SetVehicleDoorOpen(vehicle, doorIndex, false, false)
+                    end
+                else
+                    if currentDoorState then
+                        SetVehicleDoorShut(vehicle, doorIndex, false)
+                    end
+                end
+                
+                local vehicleNetId = NetworkGetNetworkIdFromEntity(vehicle)
+                TriggerServerEvent('hackphone:syncVehicleDoor', vehicleNetId, doorIndex, data.state)
+                
+                cb({status = 'success'})
+            else
+                cb({status = 'error', message = 'Invalid door index'})
+            end
+        else
+            cb({status = 'error', message = 'Vehicle not found'})
+        end
+    
+    elseif action == 'lock' or action == 'unlock' then
+        local vehicle = GetVehicleByPlate(data.plate)
+        
+        if DoesEntityExist(vehicle) then
+            local lockState = action == 'lock' and 2 or 1
+            
+            SetVehicleDoorsLocked(vehicle, lockState)
+            
+            local vehicleNetId = NetworkGetNetworkIdFromEntity(vehicle)
+            TriggerServerEvent('hackphone:syncVehicleLock', vehicleNetId, lockState)
+            
+            PlayVehicleDoorCloseSound(vehicle, 1)
+            
+            SendNUIMessage({
+                data = 'addTerminalOutput',
+                text = action == 'lock' and 'Vehicle locked.' or 'Vehicle unlocked.',
+                type = 'success'
+            })
+            
+            cb({status = 'ok'})
+        else
+            cb({status = 'error', message = 'Vehicle not found'})
+        end
+    
+    elseif action == 'engine' then
+        local vehicle = GetVehicleByPlate(data.plate)
+        
+        if DoesEntityExist(vehicle) then
+            local isEngineRunning = GetIsVehicleEngineRunning(vehicle)
+            
+            local newEngineState = data.state
+            
+            SetVehicleEngineOn(vehicle, newEngineState, true, true)
+            SetVehicleUndriveable(vehicle, not newEngineState)
+            
+            local vehicleNetId = NetworkGetNetworkIdFromEntity(vehicle)
+            TriggerServerEvent('hackphone:syncVehicleEngine', vehicleNetId, newEngineState)
+            
+            print("Engine state changed: " .. tostring(isEngineRunning) .. " -> " .. tostring(newEngineState))
+            print("Vehicle: " .. vehicle .. ", Plate: " .. data.plate)
+            
+            SendNUIMessage({
+                data = 'addTerminalOutput',
+                text = newEngineState and "Engine started." or "Engine stopped.",
+                type = 'success'
+            })
+            
+            cb({status = 'ok'})
+        else
+            print("Vehicle not found: " .. data.plate)
+            cb({status = 'error', message = 'Vehicle not found'})
+        end
+    
+    elseif action == 'lights' then
+        local vehicle = GetVehicleByPlate(data.plate)
+        
+        if DoesEntityExist(vehicle) then
+            local newLightsState = data.state
+            
+            SetVehicleLights(vehicle, newLightsState and 2 or 1)
+            
+            if newLightsState then
+                SetVehicleLightMultiplier(vehicle, 1.0)
+            end
+            
+            local vehicleNetId = NetworkGetNetworkIdFromEntity(vehicle)
+            TriggerServerEvent('hackphone:syncVehicleLights', vehicleNetId, newLightsState)
+            
+            print("Lights state changed: " .. tostring(newLightsState))
+            print("Vehicle: " .. vehicle .. ", Plate: " .. data.plate)
+            
+            SendNUIMessage({
+                data = 'addTerminalOutput',
+                text = newLightsState and "Lights turned on." or "Lights turned off.",
+                type = 'success'
+            })
+            
+            cb({status = 'ok'})
+        else
+            print("Vehicle not found: " .. data.plate)
+            cb({status = 'error', message = 'Vehicle not found'})
+        end
+    
+    elseif action == 'plantBomb' then
+        local vehicle = nil
+        local handle, veh = FindFirstVehicle()
+        local success = true
+        
+        repeat
+            if DoesEntityExist(veh) and GetVehicleNumberPlateText(veh) == data.plate then
+                vehicle = veh
+                break
+            end
+            success, veh = FindNextVehicle(handle)
+        until not success
+        
+        EndFindVehicle(handle)
+        
+        if DoesEntityExist(vehicle) then
+            local playerPed = PlayerPedId()
+            local animDict = "anim@heists@ornate_bank@thermal_charge"
+            
+            RequestAnimDict(animDict)
+            while not HasAnimDictLoaded(animDict) do
+                Citizen.Wait(10)
+            end
+            
+            TaskPlayAnim(playerPed, animDict, "thermal_charge", 8.0, 1.0, -1, 1, 0, false, false, false)
+            Citizen.Wait(5000)
+            ClearPedTasks(playerPed)
+            
+            SendNUIMessage({
+                data = 'bombPlanted',
+                plate = data.plate
+            })
+            
+            local vehicleNetId = NetworkGetNetworkIdFromEntity(vehicle)
+            TriggerServerEvent('hackphone:syncBombPlanted', vehicleNetId, 10000)
+            
+            cb({status = 'ok', message = 'Bomb planted. It will explode in 10 seconds!'})
+        else
+            cb({status = 'error', message = 'Vehicle not found'})
+        end
+    end
+end)
+
+RegisterNetEvent('hackphone:explosion')
+AddEventHandler('hackphone:explosion', function(vehicleNetId, coords)
+    local vehicle = NetToVeh(vehicleNetId)
+    
+    if DoesEntityExist(vehicle) then
+        NetworkExplodeVehicle(vehicle, true, false, false)
+        
+        if coords then
+            AddExplosion(coords.x, coords.y, coords.z, 7, 1.0, true, false, 1.0)
+        end
+        
+        SetVehicleBodyHealth(vehicle, 0.0)
+        SetVehicleEngineHealth(vehicle, 0.0)
+        
+        local playerCoords = GetEntityCoords(PlayerPedId())
+        local vehicleCoords = GetEntityCoords(vehicle)
+        local distance = #(playerCoords - vehicleCoords)
+        
+        if distance <= 50.0 then
+            SendNUIMessage({
+                data = 'addTerminalOutput',
+                text = "A vehicle exploded nearby!",
+                type = 'error'
+            })
+        end
+    end
+end)
+
+RegisterNetEvent('hackphone:updateVehicleEngine')
+AddEventHandler('hackphone:updateVehicleEngine', function(vehicleNetId, state)
+    local vehicle = NetToVeh(vehicleNetId)
+    
+    if DoesEntityExist(vehicle) then
+        SetVehicleEngineOn(vehicle, state, true, true)
+        SetVehicleUndriveable(vehicle, not state)
+    end
+end)
+
+RegisterNetEvent('hackphone:updateVehicleLights')
+AddEventHandler('hackphone:updateVehicleLights', function(vehicleNetId, state)
+    local vehicle = NetToVeh(vehicleNetId)
+    
+    if DoesEntityExist(vehicle) then
+        SetVehicleLights(vehicle, state and 2 or 1)
+        
+        if state then
+            SetVehicleLightMultiplier(vehicle, 1.0)
+        end
+    end
+end)
+
+RegisterNetEvent('hackphone:updateVehicleDoor')
+AddEventHandler('hackphone:updateVehicleDoor', function(vehicleNetId, doorIndex, state)
+    local vehicle = NetToVeh(vehicleNetId)
+    
+    if DoesEntityExist(vehicle) then
+        if state then
+            SetVehicleDoorOpen(vehicle, doorIndex, false, false)
+        else
+            SetVehicleDoorShut(vehicle, doorIndex, false)
+        end
+    end
+end)
+
+RegisterNetEvent('hackphone:updateVehicleLock')
+AddEventHandler('hackphone:updateVehicleLock', function(vehicleNetId, lockState)
+    local vehicle = NetToVeh(vehicleNetId)
+    
+    if DoesEntityExist(vehicle) then
+        SetVehicleDoorsLocked(vehicle, lockState)
+        
+        local playerCoords = GetEntityCoords(PlayerPedId())
+        local vehicleCoords = GetEntityCoords(vehicle)
+        local distance = #(playerCoords - vehicleCoords)
+        
+        if distance <= 20.0 then
+            PlayVehicleDoorCloseSound(vehicle, 1)
+        end
+    end
+end)
+
+RegisterNetEvent('hackphone:createMoneyProps')
+AddEventHandler('hackphone:createMoneyProps', function(atmId, coords, count)
+    local playerCoords = GetEntityCoords(PlayerPedId())
+    local distance = #(playerCoords - vector3(coords.x, coords.y, coords.z))
+    
+    if distance <= 50.0 then
+        if not activeMoneyProps[atmId] then
+            activeMoneyProps[atmId] = {}
+        end
+        
+        PlaySoundFrontend(-1, "ROBBERY_MONEY_TOTAL", "HUD_FRONTEND_CUSTOM_SOUNDSET", true)
+        
+        for i = 1, count do
+            local prop = CreateMoneyProp(vector3(coords.x, coords.y, coords.z))
+            if prop and DoesEntityExist(prop) then
+                table.insert(activeMoneyProps[atmId], prop)
+            end
+            Citizen.Wait(50)
+        end
+    end
+end)
+
+RegisterNetEvent('hackphone:bombPlanted')
+AddEventHandler('hackphone:bombPlanted', function(vehicleNetId, explosionTime)
+    local vehicle = NetToVeh(vehicleNetId)
+    
+    if DoesEntityExist(vehicle) then
+        local playerCoords = GetEntityCoords(PlayerPedId())
+        local vehicleCoords = GetEntityCoords(vehicle)
+        local distance = #(playerCoords - vehicleCoords)
+        
+        if distance <= 50.0 then
+            SendNUIMessage({
+                data = 'addTerminalOutput',
+                text = "A bomb has been planted on a vehicle nearby!",
+                type = 'warning'
+            })
+            
+            if explosionTime then
+                Citizen.CreateThread(function()
+                    local startTime = GetGameTimer()
+                    local endTime = startTime + explosionTime
+                    
+                    while GetGameTimer() < endTime and DoesEntityExist(vehicle) do
+                        Citizen.Wait(1000)
+                    end
+                    
+                    if DoesEntityExist(vehicle) then
+                        local coords = GetEntityCoords(vehicle)
+                        TriggerServerEvent('hackphone:syncExplosion', NetworkGetNetworkIdFromEntity(vehicle), coords)
+                    end
+                end)
+            end
+        end
+    end
+end)
+
+RegisterNetEvent('hackphone:updateATMRobbery')
+AddEventHandler('hackphone:updateATMRobbery', function(atmId, progress, isActive)
+    if isActive then
+        if activeRobberyMarkers[atmId] then
+            activeRobberyMarkers[atmId].progress = progress
+        else
+            local playerPed = PlayerPedId()
+            local playerCoords = GetEntityCoords(playerPed)
+            
+            for _, model in ipairs(atmModels) do
+                local atms = GetGamePool('CObject')
+                for _, atm in ipairs(atms) do
+                    if GetEntityModel(atm) == model then
+                        local atmCoords = GetEntityCoords(atm)
+                        local atmIdCheck = tostring(atmCoords.x) .. tostring(atmCoords.y)
+                        
+                        if atmIdCheck == atmId then
+                            activeRobberyMarkers[atmId] = {
+                                id = atmId,
+                                coords = atmCoords,
+                                handle = atm,
+                                blip = AddBlipForCoord(atmCoords.x, atmCoords.y, atmCoords.z),
+                                progress = progress,
+                                isActive = true
+                            }
+                            
+                            SetBlipSprite(activeRobberyMarkers[atmId].blip, 500)
+                            SetBlipColour(activeRobberyMarkers[atmId].blip, 1)
+                            SetBlipScale(activeRobberyMarkers[atmId].blip, 0.8)
+                            SetBlipAsShortRange(activeRobberyMarkers[atmId].blip, true)
+                            BeginTextCommandSetBlipName("STRING")
+                            AddTextComponentString("ATM Robbery in Progress")
+                            EndTextCommandSetBlipName(activeRobberyMarkers[atmId].blip)
+                            
+                            break
+                        end
+                    end
+                end
+            end
+        end
+    else
+        if activeRobberyMarkers[atmId] then
+            if activeRobberyMarkers[atmId].blip then
+                RemoveBlip(activeRobberyMarkers[atmId].blip)
+            end
+            activeRobberyMarkers[atmId] = nil
+        end
+    end
+end)
+
+local function getNearestATM()
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    local nearestATM = nil
+    local minDistance = 2.0
+    
+    for _, model in ipairs(atmModels) do
+        local atm = GetClosestObjectOfType(playerCoords.x, playerCoords.y, playerCoords.z, minDistance, model, false, false, false)
+        if DoesEntityExist(atm) then
+            local atmCoords = GetEntityCoords(atm)
+            local distance = #(playerCoords - atmCoords)
+            
+            if distance < minDistance then
+                local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(atmCoords.x, atmCoords.y, atmCoords.z))
+                nearestATM = {
+                    handle = atm,
+                    coords = atmCoords,
+                    model = model,
+                    distance = distance,
+                    id = tostring(atmCoords.x) .. tostring(atmCoords.y),
+                    location = streetName,
+                    loot = math.random(30000, 90000)
+                }
+                minDistance = distance
+            end
+        end
+    end
+    
+    return nearestATM
+end
+
+local function drawSkullMarker(coords)
+    DrawMarker(
+        1,
+        coords.x, coords.y, coords.z + 1.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.5, 0.5, 0.5,
+        255, 0, 0, 150,
+        false,
+        false,
+        2,
+        false,
+        nil,
+        nil,
+        false
+    )
+end
+
+function CreateMoneyProp(coords)
+    local propModels = {
+        `prop_money_bag_01`,
+        `prop_cash_pile_02`,
+        `hei_prop_heist_cash_pile`
+    }
+    
+    local propModel = propModels[math.random(#propModels)]
+    
+    if not HasModelLoaded(propModel) then
+        RequestModel(propModel)
+        local timeout = GetGameTimer() + 3000
+        while not HasModelLoaded(propModel) and GetGameTimer() < timeout do
+            Citizen.Wait(0)
+        end
+    end
+    
+    if not HasModelLoaded(propModel) then
+        print("Model could not be loaded: " .. propModel)
+        return nil
+    end
+    
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    
+    local atmObject = nil
+    for _, model in ipairs(atmModels) do
+        atmObject = GetClosestObjectOfType(coords.x, coords.y, coords.z, 2.0, model, false, false, false)
+        if DoesEntityExist(atmObject) then
+            break
+        end
+    end
+    
+    local spawnX, spawnY, spawnZ
+    
+    if DoesEntityExist(atmObject) then
+        local atmHeading = GetEntityHeading(atmObject)
+        
+        spawnX = coords.x + math.sin(math.rad(atmHeading)) * 1.0 + math.random(-50, 50) / 100.0
+        spawnY = coords.y - math.cos(math.rad(atmHeading)) * 1.0 + math.random(-50, 50) / 100.0
+        spawnZ = coords.z + 0.2 + math.random(-20, 20) / 100.0
+    else
+        local radius = 1.5
+        local angle = math.random() * 2 * math.pi
+        spawnX = playerCoords.x + radius * math.cos(angle)
+        spawnY = playerCoords.y + radius * math.sin(angle)
+        spawnZ = playerCoords.z + 0.2
+    end
+    
+    local prop = nil
+    
+    prop = CreateObjectNoOffset(propModel, spawnX, spawnY, spawnZ, true, false, false)
+    
+    if not DoesEntityExist(prop) then
+        prop = CreateObject(propModel, spawnX, spawnY, spawnZ, true, true, false)
+    end
+    
+    if not DoesEntityExist(prop) then
+        print("Prop could not be created!")
+        return nil
+    end
+    
+    print("Money prop created: " .. prop .. " - Location: " .. spawnX .. ", " .. spawnY .. ", " .. spawnZ)
+    
+    SetEntityVisible(prop, true, false)
+    SetEntityAlpha(prop, 255, false)
+    SetEntityDynamic(prop, true)
+    SetEntityHasGravity(prop, true)
+    SetEntityCollision(prop, true, true)
+    SetEntityCoordsNoOffset(prop, spawnX, spawnY, spawnZ, false, false, false)
+    
+    SetEntityRotation(prop, math.random(0, 360) + 0.0, math.random(0, 360) + 0.0, math.random(0, 360) + 0.0, 2, true)
+    
+    local force = 2.0
+    ApplyForceToEntity(
+        prop,
+        1,
+        math.random(-10, 10) / 10.0 * force,
+        math.random(-10, 10) / 10.0 * force,
+        math.random(5, 10) / 10.0 * force,
+        0.0, 0.0, 0.0,
+        0,
+        false, true, true, false, true
+    )
+    
+    SetModelAsNoLongerNeeded(propModel)
+    
+    Citizen.SetTimeout(30000, function()
+        if DoesEntityExist(prop) then
+            DeleteObject(prop)
+        end
+    end)
+    
+    return prop
+end
+
+RegisterNUICallback('robATM', function(data, cb)
+    local atm = getNearestATM()
+    
+    if not atm then
+        cb({ success = false, message = 'ATM not found!' })
+        return
+    end
+    
+    -- ATM ID'sini string olarak kontrol et
+    local atmIdStr = tostring(atm.id)
+    if robbedATMs[atmIdStr] then
+        cb({ success = false, message = 'This ATM has already been robbed!' })
+        return
+    end
+
+    local amount = data.estimatedLoot or math.random(30000, 90000)
+    local hackingTime = 30000
+    local progress = 0
+    local markerId = atmIdStr
+    
+    -- ATM'yi soyulmuş olarak işaretle (yerel)
+    robbedATMs[atmIdStr] = true
+    
+    -- Server'a bildir
+    TriggerServerEvent('hackphone:markATMRobbed', atmIdStr)
+    
+    activeRobberyMarkers[markerId] = {
+        id = markerId,
+        coords = atm.coords,
+        handle = atm.handle,
+        blip = AddBlipForCoord(atm.coords.x, atm.coords.y, atm.coords.z),
+        progress = 0,
+        isActive = true
+    }
+    
+    activeMoneyProps[markerId] = {}
+    
+    local propStages = {
+        { level = 25, count = 4, message = "First money started dropping from the ATM!" },
+        { level = 50, count = 7, message = "Money flow is accelerating!" },
+        { level = 75, count = 10, message = "Large amount of money is pouring from the ATM!" },
+        { level = 100, count = 15, message = "Robbery completed! All money has been seized!" }
+    }
+    local completedStages = {}
+
+    -- İlk ilerleme değerini gönder
+    SendNUIMessage({
+        data = 'atmTransferUpdate',
+        progress = 0,
+        transferAmount = 0,
+        remainingLoot = amount
+    })
+    
+    -- Terminal mesajı ekle
+    SendNUIMessage({
+        data = 'addTerminalOutput',
+        text = "ATM Robbery Progress: 0%",
+        type = 'info'
+    })
+    
+    SendNUIMessage({
+        data = 'addTerminalOutput',
+        text = "Transferred: $0 - Remaining: $" .. amount,
+        type = 'info'
+    })
+
+    Citizen.CreateThread(function()
+        local updateInterval = 300
+        local totalUpdates = hackingTime / updateInterval
+        local progressPerUpdate = 100 / totalUpdates
+        
+        while progress < 100 and activeRobberyMarkers[markerId] do
+            Citizen.Wait(updateInterval)
+            
+            progress = progress + progressPerUpdate
+            if progress > 100 then progress = 100 end
+            
+            print("ATM Robbery Progress: " .. progress .. "%")
+            
+            -- İlerleme değerini UI'a gönder (her güncelleme için)
+            local transferAmount = math.floor((progress / 100) * amount)
+            local remainingLoot = amount - transferAmount
+            
+            SendNUIMessage({
+                data = 'atmTransferUpdate',
+                progress = progress,
+                transferAmount = transferAmount,
+                remainingLoot = remainingLoot
+            })
+            
+            -- Server'a ilerleme bilgisini gönder
+            if math.floor(progress) % 10 == 0 then
+                TriggerServerEvent('hackphone:syncATMRobbery', markerId, progress, true)
+            end
+            
+            -- Prop aşamalarını kontrol et
+            for _, stage in ipairs(propStages) do
+                if progress >= stage.level and not completedStages[stage.level] then
+                    completedStages[stage.level] = true
+                    
+                    PlaySoundFrontend(-1, "ROBBERY_MONEY_TOTAL", "HUD_FRONTEND_CUSTOM_SOUNDSET", true)
+                    
+                    SendNUIMessage({
+                        data = 'addTerminalOutput',
+                        text = stage.message,
+                        type = 'info'
+                    })
+                    
+                    TriggerServerEvent('hackphone:syncMoneyProps', markerId, atm.coords, stage.count)
+                    
+                    break
+                end
+            end
+        end
+
+        -- Soygun tamamlandığında
+        if progress >= 100 then
+            -- Son ilerleme değerini gönder
+            SendNUIMessage({
+                data = 'atmTransferUpdate',
+                progress = 100,
+                transferAmount = amount,
+                remainingLoot = 0
+            })
+            
+            -- Soygun tamamlandı bilgisini gönder
+            SendNUIMessage({
+                data = 'atmRobComplete',
+                amount = amount,
+                atmId = atm.id
+            })
+            
+            -- Server'a soygun tamamlandı bilgisini gönder
+            TriggerServerEvent('hackphone:syncATMRobbery', markerId, 100, false)
+            
+            -- Para miktarını server'a gönder
+            print("Sending money directly to the server: " .. amount)
+            TriggerServerEvent('hackphone:giveATMMoney', {
+                amount = amount,
+                atmId = atm.id
+            })
+        end
+    end)
+
+    -- Başarılı başlangıç bildirimi
+    cb({ 
+        success = true, 
+        message = 'ATM hack initiated...',
+        time = hackingTime / 1000,
+        coords = atm.coords
+    })
+end)
+
+RegisterNetEvent('hackphone:syncRobbedATMs')
+AddEventHandler('hackphone:syncRobbedATMs', function(robbedList)
+    if not robbedList then
+        robbedATMs = {}
+        return
+    end
+    
+    robbedATMs = robbedList
+    
+    -- Debug mesajı
+    local count = 0
+    for _ in pairs(robbedATMs) do count = count + 1 end
+    print("Soyulan ATM listesi güncellendi: " .. count .. " adet ATM")
+    
+    -- UI'a bildir
+    SendNUIMessage({
+        data = 'syncRobbedATMs',
+        robbedATMs = robbedATMs
+    })
+end)
+
+RegisterNUICallback('getNearestATM', function(data, cb)
+    local atm = getNearestATM()
+    cb({
+        success = true,
+        atm = atm
+    })
+end)
+
+RegisterNUICallback('scanATMs', function(data, cb)
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    local nearbyATMs = {}
+    
+    for _, model in ipairs(atmModels) do
+        local atms = GetGamePool('CObject')
+        for _, atm in ipairs(atms) do
+            if GetEntityModel(atm) == model then
+                local atmCoords = GetEntityCoords(atm)
+                local distance = #(playerCoords - atmCoords)
+                
+                if distance <= 20.0 then
+                    local atmId = tostring(atmCoords.x) .. tostring(atmCoords.y)
+                    local atmData = {
+                        id = atmId,
+                        name = "ATM",
+                        location = GetStreetNameFromHashKey(GetStreetNameAtCoord(atmCoords.x, atmCoords.y, atmCoords.z)),
+                        coords = atmCoords,
+                        distance = distance,
+                        loot = math.random(30000, 90000),
+                        isRobbed = robbedATMs[atmId] or false
+                    }
+                    table.insert(nearbyATMs, atmData)
+                end
+            end
+        end
+    end
+    
+    cb({
+        success = true,
+        atms = nearbyATMs
+    })
+end)
+
+function clearMoneyProps(markerId)
+    if activeMoneyProps[markerId] then
+        for _, prop in ipairs(activeMoneyProps[markerId]) do
+            if DoesEntityExist(prop) then
+                DeleteObject(prop)
+            end
+        end
+        activeMoneyProps[markerId] = nil
+    end
+end
+
+_G.clearMoneyProps = clearMoneyProps
+
+RegisterNUICallback('clearMoneyProps', function(data, cb)
+    local markerId = data.markerId
+    clearMoneyProps(markerId)
+    cb({success = true})
+end)
+
+RegisterNUICallback('createMoneyProp', function(data, cb)
+    local atmId = data.atmId
+    local coords = data.coords
+    
+    if coords then
+        local prop = CreateMoneyProp(vector3(coords.x, coords.y, coords.z))
+        if prop and DoesEntityExist(prop) then
+            if not activeMoneyProps[atmId] then
+                activeMoneyProps[atmId] = {}
+            end
+            table.insert(activeMoneyProps[atmId], prop)
+        end
+    end
+    
+    cb({success = true})
+end)
+
+RegisterNUICallback('createMoneyPropBurst', function(data, cb)
+    local atmId = data.atmId
+    local burstCount = data.count or 10
+    
+    local atmCoords = nil
+    
+    for markerId, marker in pairs(activeRobberyMarkers) do
+        if markerId == atmId then
+            atmCoords = marker.coords
+            break
+        end
+    end
+    
+    if not atmCoords then
+        local playerPed = PlayerPedId()
+        local playerCoords = GetEntityCoords(playerPed)
+        
+        for _, model in ipairs(atmModels) do
+            local atm = GetClosestObjectOfType(playerCoords.x, playerCoords.y, playerCoords.z, 50.0, model, false, false, false)
+            if DoesEntityExist(atm) then
+                local coords = GetEntityCoords(atm)
+                local id = tostring(coords.x) .. tostring(coords.y)
+                if id == atmId then
+                    atmCoords = coords
+                    break
+                end
+            end
+        end
+    end
+    
+    if atmCoords then
+        if not activeMoneyProps[atmId] then
+            activeMoneyProps[atmId] = {}
+        end
+        
+        PlaySoundFrontend(-1, "ROBBERY_MONEY_TOTAL", "HUD_FRONTEND_CUSTOM_SOUNDSET", true)
+        
+        for i = 1, burstCount do
+            local prop = CreateMoneyProp(atmCoords)
+            if prop and DoesEntityExist(prop) then
+                table.insert(activeMoneyProps[atmId], prop)
+            end
+            Citizen.Wait(50)
+        end
+        
+        cb({success = true, count = #activeMoneyProps[atmId]})
+    else
+        print("ATM coordinates not found: " .. atmId)
+        cb({success = false, error = "ATM coordinates not found"})
+    end
+end)
+
+RegisterNUICallback('addTerminalMessage', function(data, cb)
+    local message = data.message
+    local type = data.type or 'info'
+    
+    if message then
+        SendNUIMessage({
+            data = 'terminalUpdate',
+            message = message,
+            type = type
+        })
+    end
+    
+    cb({success = true})
+end)
+
+RegisterNUICallback('playSound', function(data, cb)
+    local sound = data.sound
+    local soundSet = data.soundSet
+    
+    if sound and soundSet then
+        PlaySoundFrontend(-1, sound, soundSet, true)
+    end
+    
+    cb({success = true})
+end)
+
+RegisterNUICallback('forceCreateMoneyProps', function(data, cb)
+    local atmId = data.atmId
+    local count = data.count or 5
+    local coords = data.coords
+    
+    if not coords then
+        cb({success = false, message = "No coordinates provided"})
+        return
+    end
+    
+    if not activeMoneyProps[atmId] then
+        activeMoneyProps[atmId] = {}
+    end
+    
+    PlaySoundFrontend(-1, "ROBBERY_MONEY_TOTAL", "HUD_FRONTEND_CUSTOM_SOUNDSET", true)
+    
+    local createdProps = 0
+    for i = 1, count do
+        local prop = CreateMoneyProp(vector3(coords.x, coords.y, coords.z))
+        if prop and DoesEntityExist(prop) then
+            table.insert(activeMoneyProps[atmId], prop)
+            createdProps = createdProps + 1
+        end
+        Citizen.Wait(10)
+    end
+    
+    print("Number of props created: " .. createdProps)
+    
+    cb({success = true, count = createdProps})
+end)
+
+function CreateMoneyPropAlternative(coords)
+    local propModel = `hei_prop_heist_cash_pile`
+    
+    RequestModel(propModel)
+    while not HasModelLoaded(propModel) do
+        Citizen.Wait(0)
+    end
+    
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    
+    local radius = 1.5
+    local angle = math.random() * 2 * math.pi
+    local spawnX = playerCoords.x + radius * math.cos(angle)
+    local spawnY = playerCoords.y + radius * math.sin(angle)
+    local spawnZ = playerCoords.z
+    
+    local prop = CreateObject(propModel, spawnX, spawnY, spawnZ, true, true, true)
+    
+    if not DoesEntityExist(prop) then
+        print("Prop could not be created!")
+        return nil
+    end
+    
+    SetEntityVisible(prop, true, false)
+    SetEntityAlpha(prop, 255, false)
+    SetEntityDynamic(prop, true)
+    SetEntityHasGravity(prop, true)
+    SetEntityCollision(prop, true, true)
+    
+    SetEntityRotation(prop, math.random(0, 360) + 0.0, math.random(0, 360) + 0.0, math.random(0, 360) + 0.0, 2, true)
+    
+    local force = 1.5
+    ApplyForceToEntity(
+        prop,
+        1,
+        math.random(-10, 10) / 10.0 * force,
+        math.random(-10, 10) / 10.0 * force,
+        math.random(5, 10) / 10.0 * force,
+        0.0, 0.0, 0.0,
+        0,
+        false, true, true, false, true
+    )
+    
+    SetModelAsNoLongerNeeded(propModel)
+    
+    Citizen.SetTimeout(30000, function()
+        if DoesEntityExist(prop) then
+            DeleteObject(prop)
+        end
+    end)
+    
+    return prop
+end
+
+RegisterCommand('testmoneybag', function(source, args)
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    
+    local forward = GetEntityForwardVector(playerPed)
+    local testCoords = vector3(
+        playerCoords.x + forward.x * 2.0,
+        playerCoords.y + forward.y * 2.0,
+        playerCoords.z
+    )
+    
+    local propModel = `prop_money_bag_01`
+    RequestModel(propModel)
+    while not HasModelLoaded(propModel) do
+        Citizen.Wait(0)
+    end
+    
+    local prop = CreateObject(propModel, testCoords.x, testCoords.y, testCoords.z, true, true, true)
+    
+    if DoesEntityExist(prop) then
+        print("Test money bag created: " .. prop)
+    else
+        print("Test money bag could not be created!")
+    end
+end, false)
+
+function CreateMoneyPropV3(coords)
+    local propModel = `hei_prop_heist_cash_pile`
+    
+    RequestModel(propModel)
+    while not HasModelLoaded(propModel) do
+        Citizen.Wait(0)
+    end
+    
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    
+    local radius = 2.0
+    local angle = math.random() * 2 * math.pi
+    local spawnX = playerCoords.x + radius * math.cos(angle)
+    local spawnY = playerCoords.y + radius * math.sin(angle)
+    local spawnZ = playerCoords.z - 0.5
+    
+    local prop = CreateObject(propModel, spawnX, spawnY, spawnZ, true, true, true)
+    
+    if not DoesEntityExist(prop) then
+        print("Prop could not be created!")
+        return nil
+    end
+    
+    print("Money prop created (V3): " .. prop)
+    
+    SetEntityDynamic(prop, true)
+    SetEntityHasGravity(prop, true)
+    
+    Citizen.SetTimeout(30000, function()
+        if DoesEntityExist(prop) then
+            DeleteObject(prop)
+        end
+    end)
+    
+    return prop
+end
+
+RegisterCommand('testallprops', function(source, args)
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    
+    local prop1 = CreateMoneyProp(playerCoords)
+    if DoesEntityExist(prop1) then
+        print("Method 1 successful: " .. prop1)
+    else
+        print("Method 1 failed!")
+    end
+    
+    Citizen.Wait(500)
+    
+    local prop2 = CreateMoneyPropAlternative(playerCoords)
+    if DoesEntityExist(prop2) then
+        print("Method 2 successful: " .. prop2)
+    else
+        print("Method 2 failed!")
+    end
+    
+    Citizen.Wait(500)
+    
+    local prop3 = CreateMoneyPropV3(playerCoords)
+    if DoesEntityExist(prop3) then
+        print("Method 3 successful: " .. prop3)
+    else
+        print("Method 3 failed!")
+    end
+    
+    Citizen.SetTimeout(30000, function()
+        if DoesEntityExist(prop1) then DeleteObject(prop1) end
+        if DoesEntityExist(prop2) then DeleteObject(prop2) end
+        if DoesEntityExist(prop3) then DeleteObject(prop3) end
+    end)
+end, false)
+
+function CreateMoneyPropAroundPlayer(count)
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    local props = {}
+    
+    local propModels = {
+        `prop_money_bag_01`,
+        `prop_cash_pile_02`,
+        `hei_prop_heist_cash_pile`
+    }
+    
+    for i = 1, count do
+        local propModel = propModels[math.random(#propModels)]
+        
+        if not HasModelLoaded(propModel) then
+            RequestModel(propModel)
+            local timeout = GetGameTimer() + 3000
+            while not HasModelLoaded(propModel) and GetGameTimer() < timeout do
+                Citizen.Wait(0)
+            end
+        end
+        
+        if not HasModelLoaded(propModel) then
+            print("Model could not be loaded: " .. propModel)
+            goto continue
+        end
+        
+        local radius = 1.5
+        local angle = math.random() * 2 * math.pi
+        local spawnX = playerCoords.x + radius * math.cos(angle)
+        local spawnY = playerCoords.y + radius * math.sin(angle)
+        local spawnZ = playerCoords.z + 0.2
+        
+        local prop = CreateObject(propModel, spawnX, spawnY, spawnZ, true, true, false)
+        
+        if not DoesEntityExist(prop) then
+            print("Prop could not be created!")
+            goto continue
+        end
+        
+        SetEntityVisible(prop, true, false)
+        SetEntityAlpha(prop, 255, false)
+        SetEntityDynamic(prop, true)
+        SetEntityHasGravity(prop, true)
+        SetEntityCollision(prop, true, true)
+        
+        SetEntityRotation(prop, math.random(0, 360) + 0.0, math.random(0, 360) + 0.0, math.random(0, 360) + 0.0, 2, true)
+        
+        local force = 1.5
+        ApplyForceToEntity(
+            prop,
+            1,
+            math.random(-10, 10) / 10.0 * force,
+            math.random(-10, 10) / 10.0 * force,
+            math.random(5, 10) / 10.0 * force,
+            0.0, 0.0, 0.0,
+            0,
+            false, true, true, false, true
+        )
+        
+        SetModelAsNoLongerNeeded(propModel)
+        
+        table.insert(props, prop)
+        
+        Citizen.SetTimeout(30000, function()
+            if DoesEntityExist(prop) then
+                DeleteObject(prop)
+            end
+        end)
+        
+        Citizen.Wait(50)
+        
+        ::continue::
+    end
+    
+    return props
+end
+
+RegisterCommand('testmoneyaround', function(source, args)
+    local count = tonumber(args[1]) or 10
+    
+    PlaySoundFrontend(-1, "ROBBERY_MONEY_TOTAL", "HUD_FRONTEND_CUSTOM_SOUNDSET", true)
+    
+    local props = CreateMoneyPropAroundPlayer(count)
+    
+    print("Number of props created: " .. #props)
+    
+    Citizen.SetTimeout(30000, function()
+        for _, prop in ipairs(props) do
+            if DoesEntityExist(prop) then
+                DeleteObject(prop)
+            end
+        end
+    end)
+end, false)
+
+RegisterNUICallback('createMoneyPropsAroundPlayer', function(data, cb)
+    local count = data.count or 10
+    
+    PlaySoundFrontend(-1, "ROBBERY_MONEY_TOTAL", "HUD_FRONTEND_CUSTOM_SOUNDSET", true)
+    
+    local props = CreateMoneyPropAroundPlayer(count)
+    
+    print("Number of props created: " .. #props)
+    
+    cb({success = true, count = #props})
+end)
+
+RegisterNUICallback('atmRobComplete', function(data, cb)
+    local amount = data.amount
+    local atmId = data.atmId
+    
+    if not amount or amount <= 0 then
+        cb({ success = false, message = 'Invalid money amount!' })
+        return
+    end
+    
+    print("ATM robbery completed:")
+    print("Amount: " .. amount)
+    print("ATM ID: " .. atmId)
+    
+    TriggerServerEvent('hackphone:giveATMMoney', {
+        amount = amount,
+        atmId = atmId
+    })
+    
+    cb({ success = true, message = 'Robbery completed! You earned $' .. amount .. '!' })
+end)
+
+function SetVehicleEngineState(vehicle, state)
+    if not DoesEntityExist(vehicle) then return false end
+    
+    SetVehicleEngineOn(vehicle, state, true, true)
+    SetVehicleUndriveable(vehicle, not state)
+    
+    local netId = NetworkGetNetworkIdFromEntity(vehicle)
+    if NetworkDoesNetworkIdExist(netId) then
+        SetNetworkIdCanMigrate(netId, true)
+        NetworkRequestControlOfNetworkId(netId)
+        
+        local timeout = GetGameTimer() + 5000
+        while not NetworkHasControlOfNetworkId(netId) and GetGameTimer() < timeout do
+            Citizen.Wait(100)
+        end
+        
+        if NetworkHasControlOfNetworkId(netId) then
+            SetVehicleEngineOn(vehicle, state, true, true)
+            SetVehicleJetEngineOn(vehicle, state)
+            SetVehicleUndriveable(vehicle, not state)
+            return true
+        end
+    end
+    
+    return false
+end
+
+function SetVehicleLightsState(vehicle, state)
+    if not DoesEntityExist(vehicle) then return false end
+    
+    SetVehicleLights(vehicle, state and 2 or 1)
+    
+    if state then
+        SetVehicleLightMultiplier(vehicle, 1.0)
+    end
+    
+    local netId = NetworkGetNetworkIdFromEntity(vehicle)
+    if NetworkDoesNetworkIdExist(netId) then
+        SetNetworkIdCanMigrate(netId, true)
+        NetworkRequestControlOfNetworkId(netId)
+        
+        local timeout = GetGameTimer() + 5000
+        while not NetworkHasControlOfNetworkId(netId) and GetGameTimer() < timeout do
+            Citizen.Wait(100)
+        end
+        
+        if NetworkHasControlOfNetworkId(netId) then
+            SetVehicleLights(vehicle, state and 2 or 1)
+            if state then
+                SetVehicleLightMultiplier(vehicle, 1.0)
+            end
+            return true
+        end
+    end
+    
+    return false
+end
+
+RegisterCommand('testengine', function(source, args)
+    local playerPed = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(playerPed, false)
+    
+    if DoesEntityExist(vehicle) then
+        local state = not GetIsVehicleEngineRunning(vehicle)
+        SetVehicleEngineState(vehicle, state)
+        print("Engine state changed: " .. tostring(state))
+    else
+        print("You are not in a vehicle!")
+    end
+end, false)
+
+RegisterCommand('testlights', function(source, args)
+    local playerPed = PlayerPedId()
+    local vehicle = GetVehiclePedIsIn(playerPed, false)
+    
+    if DoesEntityExist(vehicle) then
+        local lightsState = GetVehicleLightsState(vehicle)
+        local currentLightsOn = lightsState == 2
+        local newState = not currentLightsOn
+        
+        SetVehicleLightsState(vehicle, newState)
+        print("Lights state changed: " .. tostring(newState))
+    else
+        print("You are not in a vehicle!")
+    end
+end, false)
+
+RegisterCommand('testprogress', function(source, args)
+    local progress = tonumber(args[1]) or 50
+    
+    SendNUIMessage({
+        data = 'atmTransferUpdate',
+        progress = progress,
+        transferAmount = math.floor((progress / 100) * 50000),
+        remainingLoot = math.floor(50000 * (1 - progress / 100))
+    })
+    
+    print("Test progress update sent: " .. progress .. "%")
+end, false)
+
+RegisterCommand('fixatmprogress', function(source, args)
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    
+    local atm = getNearestATM()
+    if not atm then
+        print("No ATM found nearby!")
+        return
+    end
+    
+    local amount = 50000
+    local progress = 0
+    local updateInterval = 300
+    local totalUpdates = 30000 / updateInterval
+    local progressPerUpdate = 100 / totalUpdates
+    
+    Citizen.CreateThread(function()
+        while progress < 100 do
+            Citizen.Wait(updateInterval)
+            
+            progress = progress + progressPerUpdate
+            if progress > 100 then progress = 100 end
+            
+            print("Test ATM Progress: " .. progress .. "%")
+            
+            SendNUIMessage({
+                data = 'atmTransferUpdate',
+                progress = progress,
+                transferAmount = math.floor((progress / 100) * amount),
+                remainingLoot = math.floor(amount * (1 - progress / 100))
+            })
+            
+            if progress >= 100 then
+                break
+            end
+        end
+    end)
+    
+    print("ATM progress test started!")
+end, false)
+
+RegisterCommand('resetatmslocal', function(source, args)
+    robbedATMs = {}
+    print("Yerel ATM listesi sıfırlandı")
+end, false)
+
+RegisterNUICallback('markATMRobbed', function(data, cb)
+    local atmId = data.atmId
+    
+    if atmId then
+        robbedATMs[atmId] = true
+        TriggerServerEvent('hackphone:markATMRobbed', atmId)
+        cb({success = true})
+    else
+        cb({success = false, message = "No ATM ID provided"})
+    end
+end)
+
+RegisterCommand('checkatmslocal', function(source, args)
+    -- Tablo uzunluğunu saymak yerine, tablo içeriğini kontrol et
+    local count = 0
+    for atmId, _ in pairs(robbedATMs) do
+        count = count + 1
+        print("Soyulmuş ATM (yerel): " .. atmId)
+    end
+    
+    print("Toplam soyulmuş ATM sayısı (yerel): " .. count)
+    
+    -- Server'dan güncel listeyi iste
+    TriggerServerEvent('hackphone:requestRobbedATMs')
+end, false)
+
+-- Script başladığında ATM listesini sıfırla (client tarafı)
+Citizen.CreateThread(function()
+    Citizen.Wait(2000) -- Server'ın yüklenmesini bekle
+    
+    -- Server'dan güncel (boş) listeyi iste
+    TriggerServerEvent('hackphone:requestRobbedATMs')
+    
+    print("Client başlangıcında ATM listesi istendi")
+end)
+
+RegisterCommand('testtransfer', function(source, args)
+    local amount = tonumber(args[1]) or 50000
+    local progress = tonumber(args[2]) or 50
+    
+    SendNUIMessage({
+        data = 'atmTransferUpdate',
+        progress = progress,
+        transferAmount = math.floor((progress / 100) * amount),
+        remainingLoot = math.floor(amount * (1 - progress / 100))
+    })
+    
+    print("Test transfer update sent:")
+    print("Progress: " .. progress .. "%")
+    print("Transfer Amount: $" .. math.floor((progress / 100) * amount))
+    print("Remaining Loot: $" .. math.floor(amount * (1 - progress / 100)))
+end, false)
+
+-- Black Market ürün alımı için callback
+RegisterNUICallback('getBlackMarketItems', function(data, cb)
+    if not data or not data.items or #data.items == 0 then
+        print("Geçersiz Black Market verileri!")
+        cb({ success = false, message = 'Geçersiz Black Market verileri!' })
+        return
+    end
+    
+    local totalCost = data.totalCost or 0
+    
+    -- Debug için çıktı
+    print("Black Market satın alım verileri:")
+    print("Toplam Tutar: $" .. totalCost)
+    print("Satın alınan ürünler:")
+    
+    for i, item in ipairs(data.items) do
+        print(string.format("Ürün #%d: %s (Model: %s) - Miktar: %d - Fiyat: $%d", 
+            i, item.name, item.model, item.count, item.price))
+    end
+    
+    -- Sunucu tarafına stok düşme ve ürünleri verme işlemi için istek gönder
+    TriggerServerEvent('blackmarket:purchaseItems', data.items, totalCost)
+    
+    -- Başarılı cevap
+    cb({ success = true, message = 'Satın alma işlemi tamamlandı!' })
+end)
+
+-- Stok bilgilerini sunucudan al
+RegisterNetEvent('blackmarket:syncStockData')
+AddEventHandler('blackmarket:syncStockData', function(stockData)
+    -- UI'a stok güncelleme bilgisini gönder
+    SendNUIMessage({
+        data = 'updateBlackMarketStock',
+        stockData = stockData
+    })
+end)
+
+-- Black Market ürün satın alma bildirimini işle
+RegisterNUICallback('purchaseBlackMarketItems', function(data, cb)
+    if not data or not data.items or #data.items == 0 then
+        print("Geçersiz Black Market verileri!")
+        cb({ success = false, message = 'Geçersiz Black Market verileri!' })
+        return
+    end
+    
+    local totalCost = data.totalCost or 0
+    
+    -- Debug için ayrıntılı çıktı
+    print("^3BLACK MARKET - Satın Alma İşlemi^7")
+    print("^2Toplam Tutar: $" .. totalCost .. "^7")
+    print("^3Satın alınan ürünler:^7")
+    
+    for i, item in ipairs(data.items) do
+        print(string.format("^5[%d] %s x%d - $%d - Model: %s^7", 
+            i, item.name, item.count, item.price, item.model or "N/A"))
+    end
+    
+    -- Server tarafına stok güncellemesi için istek gönder
+    Callback('Buy', function(result)
+        if result and result.success then
+            -- Bildirim göster
+            TriggerEvent("chatMessage", "BLACK MARKET", {0, 255, 0}, "Satın alma işlemi tamamlandı! Toplam: $" .. totalCost)
+            
+            -- Ses efekti
+            PlaySoundFrontend(-1, "PURCHASE", "HUD_LIQUOR_STORE_SOUNDSET", true)
+            
+            -- Stok bilgilerini güncelle
+            if result.items then
+                Config['Black Market Items'] = result.items
+            end
+            
+            -- Başarılı cevap
+            cb({ success = true, message = 'Satın alma işlemi tamamlandı!' })
+        else
+            cb({ success = false, message = result.message or 'Satın alma işlemi başarısız!' })
+        end
+    end, data.items)
+end)

@@ -1,0 +1,1939 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FiveM Hacker Phone</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" />
+    <style>
+        html {
+            font-size: 10px;
+        }
+        
+        @keyframes slideUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-30px); opacity: 0; }
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.35s cubic-bezier(0.4, 0.0, 1, 1) forwards;
+        }
+        
+        @keyframes homeScreenAppear {
+            0% { transform: translateY(20px) scale(0.97); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        
+        .animate-home-appear {
+            animation: homeScreenAppear 0.4s cubic-bezier(0.17, 0.67, 0.35, 0.98) forwards;
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes scaleUp {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        .animate-scale-up {
+            animation: scaleUp 0.4s cubic-bezier(0.17, 0.67, 0.35, 0.98) forwards;
+        }
+        
+        @keyframes app-appear {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        .app-appear {
+            animation: app-appear 0.3s ease-out forwards;
+        }
+        
+        @keyframes fingerprint-success {
+            0% { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.2); }
+            50% { background-color: rgba(76, 217, 100, 0.5); border-color: rgba(76, 217, 100, 0.8); }
+            100% { background-color: rgba(76, 217, 100, 0.3); border-color: rgba(76, 217, 100, 0.7); }
+        }
+        
+        .fingerprint-success {
+            animation: fingerprint-success 0.4s forwards;
+        }
+        
+        @keyframes fingerprint-icon-success {
+            0% { color: rgba(255, 255, 255, 0.8); transform: scale(1); }
+            50% { color: rgba(76, 217, 100, 1); transform: scale(1.2); }
+            100% { color: rgba(76, 217, 100, 1); transform: scale(1); }
+        }
+        
+        .fingerprint-icon-success {
+            animation: fingerprint-icon-success 0.4s forwards;
+        }
+        
+        @keyframes fingerprint-error {
+            0% { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.2); transform: translateX(0); }
+            10% { background-color: rgba(255, 59, 48, 0.4); border-color: rgba(255, 59, 48, 0.6); transform: translateX(-5px); }
+            30% { background-color: rgba(255, 59, 48, 0.4); border-color: rgba(255, 59, 48, 0.6); transform: translateX(5px); }
+            50% { background-color: rgba(255, 59, 48, 0.4); border-color: rgba(255, 59, 48, 0.6); transform: translateX(-5px); }
+            70% { background-color: rgba(255, 59, 48, 0.4); border-color: rgba(255, 59, 48, 0.6); transform: translateX(5px); }
+            90% { background-color: rgba(255, 59, 48, 0.4); border-color: rgba(255, 59, 48, 0.6); transform: translateX(-5px); }
+            100% { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.2); transform: translateX(0); }
+        }
+        
+        .fingerprint-error {
+            animation: fingerprint-error 0.6s forwards;
+        }
+
+        @keyframes subtle-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .subtle-pulse {
+            animation: subtle-pulse 2s infinite ease-in-out;
+        }
+        
+        @keyframes home-indicator-pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .home-indicator {
+            width: 30%;
+            height: 0.4rem;
+            background-color: white;
+            border-radius: 0.2rem;
+            margin: 0 auto;
+            margin-bottom: 0.8rem;
+            animation: home-indicator-pulse 2s infinite;
+        }
+        
+        @media screen and (width: 4096px) and (height: 2160px) {
+        html {
+            font-size: 31px;
+        }
+        }
+
+        @media screen and (width: 2560px) and (height: 1440px) {
+        html {
+            font-size: 16.75px;
+        }
+        }
+
+        @media screen and (width: 3440px) and (height: 1440px) {
+        html {
+            font-size: 17px;
+        }
+        }
+
+        @media screen and (width: 1920px) and (height: 1080px) {
+        html {
+            font-size: 12.5px;
+        }
+        }
+
+        @media screen and (width: 1920px) and (height: 1200px) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        @media screen and (width: 1920px) and (height: 1200px) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        @media screen and (width: 1920px) and (height: 1440px) {
+        html {
+            font-size: 16px;
+        }
+        }
+
+        @media screen and (width: 1600px) and (height: 1024px) {
+        html {
+            font-size: 14px;
+        }
+        }
+
+        @media screen and (width: 1440px) and (height: 900px) {
+        html {
+            font-size: 12px;
+        }
+        }
+
+        @media screen and (width: 1680px) and (height: 1050px) {
+        html {
+            font-size: 14.0px;
+        }
+        }
+
+        @media screen and (width: 1600px) and (height: 900px) {
+        html {
+            font-size: 13.3px;
+        }
+        }
+
+        @media screen and (width: 1600px) and (height: 1024px) {
+        html {
+            font-size: 13.3px;
+        }
+        }
+
+        @media screen and (width: 1768px) and (height: 992px) {
+        html {
+            font-size: 15px;
+        }
+        }
+        @media screen and (width: 1366px) and (height: 768px) {
+        html {
+            font-size: 9px;
+        }
+        }
+        @media screen and (width: 1400px) and (height: 1050px) {
+        html {
+            font-size: 11.7px;
+        }
+        }
+        @media screen and (width: 1280px) and (height: 1024px) {
+        html {
+            font-size: 11.7px;
+        }
+        }
+        @media screen and (width: 1280px) and (height: 720px) {
+        html {
+            font-size: 11px;
+        }
+        }
+        @media screen and (width: 1024px) and (height: 768px) {
+        html {
+            font-size: 10.05px;
+        }
+        }
+        @media screen and (width: 832px) and (height: 624px) {
+        html {
+            font-size: 8.05px;
+        }
+        }
+
+        @media screen and (width: 800px) and (height: 600px) {
+        html {
+            font-size: 8px;
+        }
+        }
+
+        #app {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phone-frame {
+            box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.5), 
+                        inset 0 0 0.5rem rgba(255, 255, 255, 0.1),
+                        0 0.8rem 2rem rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform: scale(0.);
+            opacity: 1;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, opacity;
+        }
+        
+        @keyframes phoneAppear {
+            0% {
+                transform: scale(0.8) translateY(100px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes phoneDisappear {
+            0% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.8) translateY(100px);
+                opacity: 0;
+            }
+        }
+        
+        .phone-appear {
+            animation: phoneAppear 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.98) forwards;
+        }
+        
+        .phone-disappear {
+            animation: phoneDisappear 0.5s cubic-bezier(0.17, 0.67, 0.35, 0.98) forwards;
+        }
+        
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            border-radius: 3.5rem 3.5rem 0 0;
+            pointer-events: none;
+        }
+        
+        .terminal-text {
+            transition: color 0.3s ease;
+        }
+        
+        .vpn-indicator {
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .progress-bar {
+            height: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 0.25rem;
+            overflow: hidden;
+            margin-top: 1rem;
+            transition: width 0.3s ease-in-out;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .app-icon {
+            box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .app-icon:hover {
+            transform: translateY(-0.2rem);
+            box-shadow: 0 0.6rem 1.2rem rgba(0, 0, 0, 0.4);
+        }
+        
+        @keyframes fingerprint-scan {
+            0% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.8; transform: scale(1); }
+        }
+        
+        @keyframes fingerprint-fill {
+            0% { color: rgba(255, 255, 255, 0.8); }
+            100% { color: rgba(0, 255, 0, 1); }
+        }
+        
+        .fingerprint-scanning {
+            animation: fingerprint-scan 1.5s infinite;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .fingerprint-success {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-color: rgba(0, 255, 0, 0.7);
+            transition: all 0.3s ease;
+        }
+        
+        .fingerprint-error {
+            background-color: rgba(255, 0, 0, 0.3);
+            border-color: rgba(255, 0, 0, 0.7);
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        
+        .fingerprint-icon-scanning {
+            animation: fingerprint-fill 1.5s infinite alternate;
+        }
+        
+        .fingerprint-icon-success {
+            color: rgba(0, 255, 0, 1);
+            transition: all 0.3s ease;
+        }
+        
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+            40%, 60% { transform: translate3d(3px, 0, 0); }
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        /* Terminal container için CSS */
+        .terminal-container {
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Kategori değişiminde ürün animasyonları */
+        .product-list-enter-active,
+        .product-list-leave-active {
+            transition: all 0.5s ease;
+        }
+        
+        .product-list-enter-from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .product-list-leave-to {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        
+        /* Staggered efekti vermek için */
+        .product-item {
+            transition-delay: calc(0.05s * var(--i));
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#10B981",
+                        darkbg: "#121212",
+                        cardbg: "#1e1e1e",
+                        terminal: "#111111",
+                        success: "#4CD964",
+                        info: "#007AFF",
+                        danger: "#FF2D55",
+                    },
+                    borderRadius: {
+                        none: "0px",
+                        sm: "4px",
+                        DEFAULT: "8px",
+                        md: "12px",
+                        lg: "16px",
+                        xl: "20px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        "4xl": "5rem",
+                        full: "9999px",
+                        button: "8px",
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+
+<body class="[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+
+    <div id="app" class="flex justify-center items-center">
+        <div class="w-[25rem] h-[52rem] phone-frame" 
+             :style="{ 
+                backgroundColor: phoneSettings.frameColor, 
+                display: ui ? 'block' : 'none',
+                borderRadius: '3rem', 
+                position: 'relative',
+                overflow: 'hidden', 
+                left: '55rem',
+                top: '10rem',
+                border: '0.5rem solid', 
+                borderColor: phoneSettings.frameColor
+             }">
+            <div class="absolute w-[6rem] h-[1.5rem] rounded-[0.8rem] top-[0.5rem] left-1/2 transform -translate-x-1/2 z-10 flex items-center justify-center bg-black">
+                <div class="w-[1.5rem] h-[0.6rem] bg-black rounded-full"></div>
+            </div>
+
+            <div v-if="isLocked || currentApp === null" class="absolute top-[0.8rem] left-0 w-full flex justify-between px-[1.2rem] text-white z-[50] text-[1rem]">
+                <div>{{ currentTime }}</div>
+                <div class="flex items-center">
+                    <i class="ri-wifi-fill"></i>
+                    <i class="ri-battery-fill ml-2"></i>
+                </div>
+            </div>
+
+            <div class="w-full h-full bg-cover relative overflow-y-auto pt-[3.5rem]" 
+                 :style="{ backgroundImage: `url('${phoneSettings.wallpaper}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
+                
+                <!-- Kilit Ekranı -->
+                <div v-if="isLocked" class="absolute inset-0 z-50 flex flex-col items-center justify-between py-[5rem]"
+                     :class="{ 'animate-slide-up': lockScreenAnimation }"
+                     :style="{ backgroundImage: `url('${phoneSettings.wallpaper}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
+                    
+                    <!-- Çentik -->
+                    <div class="absolute w-[6rem] h-[1.5rem] rounded-[0.8rem] top-[0.5rem] left-1/2 transform -translate-x-1/2 z-[51] flex items-center justify-center bg-black">
+                        <div class="w-[1.5rem] h-[0.6rem] bg-black rounded-full"></div>
+                    </div>
+                    
+                    <!-- Kilit Ekranı Saat -->
+                    <div class="flex flex-col items-center mt-[3rem]">
+                        <div class="text-[4rem] font-bold text-white drop-shadow-lg">{{ currentTime }}</div>
+                        <div class="text-[1.2rem] text-white/90 drop-shadow-md">{{ new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) }}</div>
+                    </div>
+                    
+                    <!-- Bildirimler Alanı (Boş) -->
+                    <div class="flex-1"></div>
+                    
+                    <!-- Parmak İzi Okuyucu -->
+                    <div class="mb-[5rem] flex flex-col items-center">
+                        <div @click="fingerprintScan" 
+                             class="w-[5rem] h-[5rem] rounded-full bg-black/30 backdrop-blur-md border border-white/20 flex items-center justify-center cursor-pointer transition-all hover:bg-black/40"
+                             :class="{ 
+                                'fingerprint-scanning': fingerprintScanning, 
+                                'fingerprint-success': fingerprintSuccess, 
+                                'fingerprint-error': fingerprintError, 
+                                'animate-none': fingerprintSuccess || fingerprintError 
+                             }">
+                            <i class="ri-fingerprint-line text-[2.5rem] text-white/80"
+                               :class="{ 
+                                   'fingerprint-icon-scanning': fingerprintScanning,
+                                   'fingerprint-icon-success': fingerprintSuccess 
+                               }"></i>
+                        </div>
+                        <div @click="fingerprintScan" class="text-white/80 text-[1rem] mt-[1rem] drop-shadow-md cursor-pointer">Touch to unlock</div>
+                    </div>
+                    
+                    <!-- Camera and Flashlight Shortcuts -->
+                    <div class="absolute bottom-[2rem] w-full flex justify-between px-[2rem]">
+                        <div class="w-[3.5rem] h-[3.5rem] rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
+                            <i class="ri-flashlight-line text-[1.8rem] text-white/80"></i>
+                        </div>
+                        <div class="w-[3.5rem] h-[3.5rem] rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
+                            <i class="ri-camera-line text-[1.8rem] text-white/80"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Home Screen (When Unlocked) -->
+                <div v-if="!isLocked">
+                    <!-- App Grid -->
+                    <div class="grid grid-cols-3 gap-[1.2rem] p-[1.5rem]">
+                        <div @click="openApp('hack')" class="cursor-pointer flex flex-col items-center">
+                            <div class="w-[4.5rem] h-[4.5rem] rounded-[1.2rem] flex justify-center items-center text-white text-[2rem] app-icon bg-gradient-to-br from-black to-gray-800">
+                                <i class="ri-terminal-box-fill"></i>
+                            </div>
+                            <div class="text-center text-white text-[1rem] mt-[0.5rem] font-medium drop-shadow-md">Terminal</div>
+                        </div>
+                        <div @click="openApp('vpn')" class="cursor-pointer flex flex-col items-center">
+                            <div class="w-[4.5rem] h-[4.5rem] rounded-[1.2rem] flex justify-center items-center text-white text-[2rem] app-icon bg-gradient-to-br from-blue-600 to-blue-800">
+                                <i class="ri-shield-keyhole-fill"></i>
+                            </div>
+                            <div class="text-center text-white text-[1rem] mt-[0.5rem] font-medium drop-shadow-md">VPN</div>
+                        </div>
+                        <div @click="openApp('tools')" class="cursor-pointer flex flex-col items-center">
+                            <div class="w-[4.5rem] h-[4.5rem] rounded-[1.2rem] flex justify-center items-center text-white text-[2rem] app-icon bg-gradient-to-br from-red-600 to-red-800">
+                                <i class="ri-store-2-fill"></i>
+                            </div>
+                            <div class="text-center text-white text-[1rem] mt-[0.5rem] font-medium drop-shadow-md">Black Market</div>
+                        </div>
+                        <div @click="openApp('settings')" class="cursor-pointer flex flex-col items-center">
+                            <div class="w-[4.5rem] h-[4.5rem] rounded-[1.2rem] flex justify-center items-center text-white text-[2rem] app-icon bg-gradient-to-br from-gray-600 to-gray-800">
+                                <i class="ri-settings-4-fill"></i>
+                            </div>
+                            <div class="text-center text-white text-[1rem] mt-[0.5rem] font-medium drop-shadow-md">Settings</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dock -->
+                    <div class="absolute bottom-[2rem] left-1/2 transform -translate-x-1/2 w-[90%] bg-black/30 backdrop-blur-md rounded-[2rem] flex justify-around py-[1rem] border border-white/10">
+                        <div class="w-[5rem] h-[5rem] rounded-[1.5rem] flex justify-center items-center text-white text-[2.5rem] app-icon bg-gradient-to-br from-black to-gray-800 cursor-pointer" @click="openApp('hack')">
+                            <i class="ri-terminal-box-fill"></i>
+                        </div>
+                        <div class="w-[5rem] h-[5rem] rounded-[1.5rem] flex justify-center items-center text-white text-[2.5rem] app-icon bg-gradient-to-br from-blue-600 to-blue-800 cursor-pointer" @click="openApp('vpn')">
+                            <i class="ri-shield-keyhole-fill"></i>
+                        </div>
+                        <div class="w-[5rem] h-[5rem] rounded-[1.5rem] flex justify-center items-center text-white text-[2.5rem] app-icon bg-gradient-to-br from-red-600 to-red-800 cursor-pointer" @click="openApp('tools')">
+                            <i class="ri-store-2-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hack Uygulaması - Modernize Edilmiş Terminal -->
+            <div class="absolute top-0 left-0 w-full h-full bg-black z-20 overflow-hidden" 
+                 :style="{ display: currentApp === 'hack' ? 'flex' : 'none', flexDirection: 'column' }">
+                
+                <!-- Terminal Başlık Çubuğu -->
+                <div class="bg-gradient-to-r from-[#0a0a0a] to-[#121212] border-b border-[#333] p-[0.6rem] flex items-center justify-between">
+                    <div @click="closeApp" class="cursor-pointer bg-black/40 hover:bg-black/60 transition-all h-[2.2rem] w-[2.2rem] flex items-center justify-center rounded-lg border border-[#333]">
+                        <i class="ri-arrow-go-back-line text-[1rem]" :style="{ color: phoneSettings.terminalColor }"></i>
+                    </div>
+                    
+                    <div class="absolute left-1/2 transform -translate-x-1/2">
+                        <div class="flex items-center h-[2.2rem]">
+                            <!-- HackOS Kısmı -->
+                            <div class="bg-black/40 h-full flex items-center justify-center px-[0.6rem] rounded-l-lg border border-r-0 border-[#333]">
+                                <i class="ri-terminal-box-fill text-[1rem]" :style="{ color: phoneSettings.terminalColor }"></i>
+                                <span class="text-[1rem] font-mono font-bold ml-[0.3rem]" :style="{ color: phoneSettings.terminalColor }">Hack</span>
+                                <span class="text-[1rem] font-mono font-bold" :style="{ color: '#fff' }">OS</span>
+                            </div>
+                            
+                            <!-- VPN Durumu -->
+                            <div class="h-full bg-black/40 px-[0.6rem] rounded-r-lg border border-l-0 border-[#333] flex items-center"
+                                 :style="{ borderColor: vpnActive ? '#4CD964' : '#FF3B30' }">
+                                <i class="ri-shield-keyhole-fill text-[1rem] mr-[0.3rem]" :style="{ color: vpnActive ? '#4CD964' : '#FF3B30' }"></i>
+                                <div class="font-medium text-[0.8rem]" :style="{ color: vpnActive ? '#4CD964' : '#FF3B30' }">
+                                    VPN
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="h-[2.2rem] bg-black/40 px-[0.6rem] rounded-lg border border-[#333] flex items-center">
+                        <i class="ri-time-line text-[1rem] mr-[0.3rem]" :style="{ color: phoneSettings.terminalColor }"></i>
+                        <div class="font-mono text-[0.8rem] font-medium" :style="{ color: '#fff' }">{{ currentTime }}</div>
+                    </div>
+                </div>
+                
+                <!-- Terminal Ana Ekranı -->
+                <div class="flex-1 flex flex-col p-[1rem] overflow-hidden bg-black">
+                    <!-- Terminal Çıktısı -->
+                    <div ref="terminalOutputContainer" class="flex-1 overflow-y-auto p-[0.8rem] space-y-[0.4rem] [&::-webkit-scrollbar]:hidden">
+                        <template v-for="(output, index) in terminalOutput" :key="index">
+                            <!-- Normal metin çıktısı -->
+                            <div v-if="typeof output === 'string'" 
+                                 class="text-[0.8rem] font-mono mb-[0.4rem]"
+                                 :style="{ color: phoneSettings.terminalColor }">{{ output }}</div>
+                            
+                            <!-- GPS çıktısı -->
+                            <div v-else-if="output.type === 'gps'" 
+                                 class="border border-blue-900 rounded p-[0.5rem] bg-black/30 mb-[0.8rem]">
+                                <div class="text-blue-400 text-[0.9rem] font-mono">{{ output.text }}</div>
+                                <div class="flex justify-between items-center mt-[0.3rem]">
+                                    <div>
+                                        <div class="text-[0.8rem] font-mono" :style="{ color: phoneSettings.terminalColor }">Location: {{ output.location }}</div>
+                                        <div class="text-[0.7rem] text-gray-400 font-mono">Coordinates: {{ output.coords }}</div>
+                                    </div>
+                                    <div class="text-[0.7rem] text-gray-400">{{ output.time }}</div>
+                                </div>
+                                <button @click="markLocationOnMap(output.coords)" 
+                                       class="mt-[0.5rem] w-full p-[0.3rem] rounded bg-blue-900/50 hover:bg-blue-900/80 transition-colors text-[0.8rem] text-white">
+                                    <i class="ri-map-pin-fill mr-[0.3rem]"></i> Mark on Map
+                                </button>
+                            </div>
+                            
+                            <!-- İlerleme çubuğu -->
+                            <div v-else-if="output.isProgressBar" 
+                                 class="text-[0.8rem] font-mono mb-[0.4rem]" 
+                                 :style="{ color: phoneSettings.terminalColor }">
+                                {{ output.text }}
+                            </div>
+                            
+                            <!-- Diğer tip çıktılar -->
+                            <div v-else 
+                                 class="text-[0.8rem] font-mono mb-[0.4rem]"
+                                 :class="{
+                                    'text-green-400': output.type === 'success',
+                                    'text-red-400': output.type === 'error',
+                                    'text-yellow-400': output.type === 'warning' || output.type === 'system',
+                                    'text-blue-400': output.type === 'info' || output.type === 'command',
+                                    'text-gray-300': !output.type
+                                 }">
+                                {{ output.text || output }}
+                            </div>
+                        </template>
+                    </div>
+                    
+                    <!-- GPS takip bilgileri -->
+                    <div v-if="lastVehicleLocation" class="mt-[0.8rem] mb-[0.4rem] p-[0.5rem] bg-black/30 border border-blue-900 rounded">
+                        <div class="text-[0.9rem] font-bold text-blue-400 mb-[0.3rem]">Son Bilinen Konum</div>
+                        <div class="text-[0.7rem] text-gray-300">
+                            <div><span class="text-blue-400">Araç:</span> {{ selectedVehicle ? selectedVehicle.name + ' (' + selectedVehicle.plate + ')' : 'Bilinmiyor' }}</div>
+                            <div><span class="text-blue-400">Konum:</span> {{ lastVehicleLocation.location }}</div>
+                            <div><span class="text-blue-400">Koordinatlar:</span> {{ lastVehicleLocation.coords }}</div>
+                            <div><span class="text-blue-400">Güncelleme:</span> {{ new Date().toLocaleTimeString() }}</div>
+                        </div>
+                        <button @click="markLocationOnMap(lastVehicleLocation.coords)" 
+                                class="mt-[0.5rem] w-full p-[0.3rem] rounded bg-blue-900/50 hover:bg-blue-900/80 transition-colors text-[0.8rem] text-white">
+                            <i class="ri-map-pin-fill mr-[0.3rem]"></i> Haritada İşaretle
+                        </button>
+                    </div>
+                    
+                    <!-- Komut Girişi -->
+                    <div class="flex items-center mt-auto bg-[#0a0a0a] rounded-lg p-[0.8rem] border border-[#333]">
+                        <span class="mr-[0.5rem] font-bold" :style="{ color: phoneSettings.terminalColor }">$</span>
+                        <input type="text" v-model="cmdInput" @keyup.enter="executeCommand" 
+                               class="bg-transparent border-none w-full py-[0.4rem] outline-none text-[1rem]"
+                               :style="{ color: phoneSettings.terminalColor, fontFamily: phoneSettings.terminalFont }" 
+                               placeholder="Enter command...">
+                    </div>
+                </div>
+                
+                <!-- Hızlı Komut Çubuğu -->
+                <div class="bg-[#0a0a0a] border-t border-[#333] p-[0.8rem] overflow-x-auto [&::-webkit-scrollbar]:hidden">
+                    <div class="flex space-x-[0.8rem]">
+                        <button @click="cmdInput = 'help'; executeCommand()" 
+                                class="min-w-max px-[1rem] py-[0.5rem] rounded-lg text-[0.9rem] transition-all hover:opacity-80"
+                                :style="{ borderColor: phoneSettings.terminalColor, color: phoneSettings.terminalColor, backgroundColor: 'rgba(10,10,10,0.8)', border: `1px solid ${phoneSettings.terminalColor}70` }">
+                            help
+                        </button>
+                        <button @click="cmdInput = 'scan'; executeCommand()" 
+                                class="min-w-max px-[1rem] py-[0.5rem] rounded-lg text-[0.9rem] transition-all hover:opacity-80"
+                                :style="{ borderColor: phoneSettings.terminalColor, color: phoneSettings.terminalColor, backgroundColor: 'rgba(10,10,10,0.8)', border: `1px solid ${phoneSettings.terminalColor}70` }">
+                            scan
+                        </button>
+                        <button @click="cmdInput = 'ip'; executeCommand()" 
+                                class="min-w-max px-[1rem] py-[0.5rem] rounded-lg text-[0.9rem] transition-all hover:opacity-80"
+                                :style="{ borderColor: phoneSettings.terminalColor, color: phoneSettings.terminalColor, backgroundColor: 'rgba(10,10,10,0.8)', border: `1px solid ${phoneSettings.terminalColor}70` }">
+                            ip
+                        </button>
+                        <!-- Vehicle Access butonu - Mavi renk tonu -->
+                        <button @click="cmdInput = 'vehicle'; executeCommand()" 
+                                class="min-w-max px-[1rem] py-[0.5rem] rounded-lg text-[0.9rem] transition-all hover:scale-105 flex items-center"
+                                :style="{ color: '#ffffff', backgroundColor: '#1a5fb4', border: '1px solid #3584e4', boxShadow: '0 0 8px rgba(53, 132, 228, 0.5)' }">
+                            <i class="ri-car-line mr-[0.3rem]"></i> vehicle
+                        </button>
+                        <!-- ATM Hack butonu - Kırmızı renk tonu -->
+                        <button @click="cmdInput = 'atm'; executeCommand()" 
+                                class="min-w-max px-[1rem] py-[0.5rem] rounded-lg text-[0.9rem] transition-all hover:scale-105 flex items-center"
+                                :style="{ color: '#ffffff', backgroundColor: '#c01c28', border: '1px solid #e01b24', boxShadow: '0 0 8px rgba(224, 27, 36, 0.5)' }">
+                            <i class="ri-bank-card-line mr-[0.3rem]"></i> atm
+                        </button>
+                        <button @click="cmdInput = 'vpn toggle'; executeCommand()" 
+                                class="min-w-max px-[1rem] py-[0.5rem] rounded-lg text-[0.9rem] transition-all hover:opacity-80"
+                                :style="{ borderColor: phoneSettings.terminalColor, color: phoneSettings.terminalColor, backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${phoneSettings.terminalColor}40` }">
+                            vpn toggle
+                        </button>
+                        <button @click="cmdInput = 'clear'; executeCommand()" 
+                                class="min-w-max px-[1rem] py-[0.5rem] rounded-lg text-[0.9rem] transition-all hover:opacity-80"
+                                :style="{ borderColor: phoneSettings.terminalColor, color: phoneSettings.terminalColor, backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${phoneSettings.terminalColor}40` }">
+                            clear
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Hack Metodları Bölümü -->
+                <div class="bg-[#0a0a0a] border-t border-[#333] p-[0.8rem] overflow-y-auto [&::-webkit-scrollbar]:hidden max-h-[16rem]">
+                    <h3 class="text-[1rem] mb-[0.8rem] font-bold" :style="{ color: phoneSettings.terminalColor }">
+                        <i class="ri-code-box-fill mr-[0.3rem]"></i> Hack Methods
+                    </h3>
+                    <div class="grid grid-cols-2 gap-[0.6rem]">
+                        <!-- Araç Erişimi -->
+                        <div class="bg-terminal border border-opacity-50 rounded-lg overflow-hidden" 
+                             :style="{ borderColor: phoneSettings.terminalColor, backgroundColor: 'rgba(0,0,0,0.2)' }">
+                            <button @click="toggleHackMethod('vehicle')" 
+                                    class="w-full p-[0.6rem] hover:bg-opacity-30 transition-colors text-[0.9rem] flex items-center justify-between"
+                                    :style="{ color: phoneSettings.terminalColor }">
+                                <div class="flex items-center">
+                                    <i class="ri-car-fill mr-1"></i> Vehicle Access
+                                </div>
+                                <i :class="activeVehicleMethod ? 'ri-arrow-down-s-line' : 'ri-arrow-right-s-line'"></i>
+                            </button>
+                            
+                            <div v-if="activeVehicleMethod" class="border-t border-[#333] bg-black/30">
+                                <!-- Araç Listesi Başlık ve Yenileme Butonu -->
+                                <div class="flex justify-between items-center p-[0.6rem] border-b border-[#333]">
+                                    <div class="text-[0.8rem] font-medium flex items-center" :style="{ color: phoneSettings.terminalColor }">
+                                        <i class="ri-car-line mr-[0.3rem]"></i> Nearby Vehicles
+                                    </div>
+                                    <button @click="scanNearbyVehicles(true)" 
+                                            class="text-[0.7rem] w-[1.8rem] h-[1.8rem] rounded-full bg-black/30 hover:bg-black/50 transition-colors flex items-center justify-center"
+                                            :style="{ color: phoneSettings.terminalColor }">
+                                        <i class="ri-refresh-line"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Araç Listesi -->
+                                <div class="max-h-[16rem] overflow-y-auto [&::-webkit-scrollbar]:hidden p-[0.6rem]">
+                                    <div v-if="nearbyVehicles && nearbyVehicles.length > 0">
+                                        <div v-for="vehicle in nearbyVehicles" :key="vehicle.id" 
+                                             class="p-[0.6rem] mb-[0.4rem] rounded bg-black/20 hover:bg-black/40 transition-all"
+                                             :class="{ 'opacity-50': vehicle.isDestroyed }">
+                                            <!-- Araç Başlık -->
+                                            <div v-if="!vehicle.isDestroyed" @click="selectVehicle(vehicle)"
+                                                 class="flex justify-between items-center cursor-pointer p-2 rounded transition-all"
+                                                 :class="{'bg-black/40 border border-opacity-50': selectedVehicle && selectedVehicle.id === vehicle.id}"
+                                                 :style="selectedVehicle && selectedVehicle.id === vehicle.id ? { borderColor: phoneSettings.terminalColor } : {}">
+                                                <div>
+                                                    <div class="text-[0.9rem] font-medium flex items-center" :style="{ color: phoneSettings.terminalColor }">
+                                                        {{ vehicle.name }}
+                                                    </div>
+                                                    <div class="text-[0.8rem] text-gray-400">
+                                                        {{ vehicle.plate }} - <span :class="vehicle.proximityColor">{{ vehicle.distance }}</span>
+                                                    </div>
+                                                </div>
+                                                <!-- Kilit durumu ikonu -->
+                                                <div class="text-[1.2rem]" 
+                                                     :class="vehicle.status === 'Locked' ? 'text-red-500' : 'text-green-500'">
+                                                    <i :class="vehicle.status === 'Locked' ? 'ri-lock-fill' : 'ri-lock-unlock-fill'"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Patlamış araç gösterimi -->
+                                            <div v-if="vehicle.isDestroyed" 
+                                                 class="flex justify-between items-center cursor-not-allowed">
+                                                <div>
+                                                    <div class="text-[0.9rem] font-medium flex items-center" :style="{ color: phoneSettings.terminalColor }">
+                                                        {{ vehicle.name }}
+                                                        <span class="ml-2 bg-red-900/50 text-red-500 text-[0.7rem] px-1 py-0.5 rounded">
+                                                            <i class="ri-fire-fill"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div class="text-[0.8rem] text-gray-400">
+                                                        {{ vehicle.plate }} - <span :class="vehicle.proximityColor">{{ vehicle.distance }}</span>
+                                                    </div>
+                                                </div>
+                                                <!-- Patlama ikonu -->
+                                                <div class="text-[1.2rem] text-red-500">
+                                                    <i class="ri-close-circle-fill"></i>
+                                                </div>
+                                            </div>
+
+                                            <!-- Araç Kontrol Butonları -->
+                                            <div class="grid grid-cols-2 gap-2 mt-2" v-if="selectedVehicle">
+                                                <!-- Kilit Kontrol Butonu -->
+                                                <button @click="toggleVehicleLock(selectedVehicle)" 
+                                                        class="flex items-center justify-center p-2 rounded-lg transition-all"
+                                                        :style="{ backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${phoneSettings.terminalColor}40` }">
+                                                    <div class="flex flex-col items-center">
+                                                        <i :class="selectedVehicle.status === 'Locked' ? 'ri-lock-fill text-red-500' : 'ri-lock-unlock-fill text-green-500'" 
+                                                           class="text-xl mb-1"></i>
+                                                        <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">
+                                                            {{ selectedVehicle.status === 'Locked' ? 'Unlock' : 'Lock' }}
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                                
+                                                <!-- Motor Kontrol Butonu -->
+                                                <button @click="toggleVehicleEngine(selectedVehicle)" 
+                                                        class="flex items-center justify-center p-2 rounded-lg transition-all"
+                                                        :style="{ backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${phoneSettings.terminalColor}40` }">
+                                                    <div class="flex flex-col items-center">
+                                                        <i class="ri-dashboard-3-fill text-xl mb-1" :class="selectedVehicle.engineRunning ? 'text-green-500' : 'text-gray-500'"></i>
+                                                        <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">
+                                                            {{ selectedVehicle.engineRunning ? 'Stop Engine' : 'Start Engine' }}
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                                
+                                                <!-- Kapı Kontrol Butonu -->
+                                                <button @click="toggleDoorControls(selectedVehicle)" 
+                                                        class="flex items-center justify-center p-2 rounded-lg transition-all"
+                                                        :style="{ backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${phoneSettings.terminalColor}40` }">
+                                                    <div class="flex flex-col items-center">
+                                                        <i class="ri-door-open-fill text-xl mb-1" :class="showDoorControls ? 'text-yellow-500' : 'text-gray-500'"></i>
+                                                        <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">
+                                                            {{ showDoorControls ? 'Hide Controls' : 'Door Controls' }}
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                                
+                                                <!-- Konum İşaretleme Butonu -->
+                                                <button @click="markVehicleLocation(selectedVehicle)" 
+                                                        class="flex items-center justify-center p-2 rounded-lg transition-all"
+                                                        :style="{ backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${phoneSettings.terminalColor}40` }">
+                                                    <div class="flex flex-col items-center">
+                                                        <i class="ri-map-pin-fill text-xl mb-1 text-blue-500"></i>
+                                                        <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">
+                                                            Mark Location
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                                
+                                                <!-- Bomba Yerleştirme Butonu -->
+                                                <button @click="plantBomb(selectedVehicle)" 
+                                                        class="flex items-center justify-center p-2 rounded-lg transition-all col-span-2"
+                                                        :class="{ 'opacity-50 cursor-not-allowed': selectedVehicle.bombPlanted }"
+                                                        :disabled="selectedVehicle.bombPlanted"
+                                                        :style="{ backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${phoneSettings.terminalColor}40` }">
+                                                    <div class="flex flex-col items-center">
+                                                        <i class="ri-bomb-fill text-xl mb-1" :class="selectedVehicle.bombPlanted ? 'text-gray-500' : 'text-red-600 animate-pulse'"></i>
+                                                        <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">
+                                                            {{ selectedVehicle.bombPlanting ? 'Planting...' : (selectedVehicle.bombPlanted ? 'Bomb Planted' : 'Plant Bomb') }}
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                                
+                                                <!-- Detaylı Kapı Kontrolleri -->
+                                                <div class="col-span-2 mt-2 bg-black/20 rounded-lg p-2" v-if="showDoorControls">
+                                                    <div class="text-xs mb-2 font-medium" :style="{ color: phoneSettings.terminalColor }">Door Controls</div>
+                                                    <div class="grid grid-cols-2 gap-2">
+                                                        <!-- Ön Sol Kapı -->
+                                                        <button @click="toggleDoor(selectedVehicle, 0)" 
+                                                                class="flex items-center justify-between p-2 rounded bg-black/30 transition-all">
+                                                            <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">Front Left</span>
+                                                            <i :class="getDoorStatus(selectedVehicle, 0) ? 'ri-door-open-fill text-yellow-500' : 'ri-door-fill text-gray-500'"></i>
+                                                        </button>
+                                                        
+                                                        <!-- Ön Sağ Kapı -->
+                                                        <button @click="toggleDoor(selectedVehicle, 1)" 
+                                                                class="flex items-center justify-between p-2 rounded bg-black/30 transition-all">
+                                                            <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">Front Right</span>
+                                                            <i :class="getDoorStatus(selectedVehicle, 1) ? 'ri-door-open-fill text-yellow-500' : 'ri-door-fill text-gray-500'"></i>
+                                                        </button>
+                                                        
+                                                        <!-- Arka Sol Kapı -->
+                                                        <button @click="toggleDoor(selectedVehicle, 2)" 
+                                                                class="flex items-center justify-between p-2 rounded bg-black/30 transition-all">
+                                                            <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">Rear Left</span>
+                                                            <i :class="getDoorStatus(selectedVehicle, 2) ? 'ri-door-open-fill text-yellow-500' : 'ri-door-fill text-gray-500'"></i>
+                                                        </button>
+                                                        
+                                                        <!-- Arka Sağ Kapı -->
+                                                        <button @click="toggleDoor(selectedVehicle, 3)" 
+                                                                class="flex items-center justify-between p-2 rounded bg-black/30 transition-all">
+                                                            <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">Rear Right</span>
+                                                            <i :class="getDoorStatus(selectedVehicle, 3) ? 'ri-door-open-fill text-yellow-500' : 'ri-door-fill text-gray-500'"></i>
+                                                        </button>
+                                                        
+                                                        <!-- Bagaj -->
+                                                        <button @click="toggleDoor(selectedVehicle, 5)" 
+                                                                class="flex items-center justify-between p-2 rounded bg-black/30 transition-all">
+                                                            <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">Trunk</span>
+                                                            <i :class="getDoorStatus(selectedVehicle, 5) ? 'ri-suitcase-3-fill text-yellow-500' : 'ri-suitcase-3-line text-gray-500'"></i>
+                                                        </button>
+                                                        
+                                                        <!-- Kaput -->
+                                                        <button @click="toggleDoor(selectedVehicle, 4)" 
+                                                                class="flex items-center justify-between p-2 rounded bg-black/30 transition-all">
+                                                            <span class="text-xs" :style="{ color: phoneSettings.terminalColor }">Hood</span>
+                                                            <i :class="getDoorStatus(selectedVehicle, 4) ? 'ri-tools-fill text-yellow-500' : 'ri-tools-line text-gray-500'"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else class="text-center p-[1rem]">
+                                        <div class="text-[0.8rem] text-gray-400 mb-[0.5rem]">
+                                            No vehicles found nearby
+                                        </div>
+                                        <button @click="scanNearbyVehicles(true)" 
+                                                class="text-[0.8rem] px-[0.8rem] py-[0.4rem] rounded bg-black/30 hover:bg-black/50 transition-colors flex items-center justify-center mx-auto"
+                                                :style="{ color: phoneSettings.terminalColor, borderColor: phoneSettings.terminalColor, border: '1px solid' }">
+                                            <i class="ri-radar-line mr-[0.3rem]"></i> Scan for Vehicles
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- ATM Hack -->
+                        <div class="bg-terminal border border-opacity-50 rounded-lg overflow-hidden" 
+                             :style="{ borderColor: phoneSettings.terminalColor, backgroundColor: 'rgba(0,0,0,0.2)' }">
+                            <button @click="toggleHackMethod('bank')" 
+                                    class="w-full p-[0.6rem] hover:bg-opacity-30 transition-colors text-[0.9rem] flex items-center justify-between"
+                                    :style="{ color: phoneSettings.terminalColor }">
+                                <div class="flex items-center">
+                                    <i class="ri-bank-card-fill mr-1"></i> ATM Hack
+                                </div>
+                                <i :class="activeBankMethod ? 'ri-arrow-down-s-line' : 'ri-arrow-right-s-line'"></i>
+                            </button>
+                            <div v-if="activeBankMethod" class="border-t border-[#333] bg-black/30">
+                                <!-- ATM Listesi Başlık ve Yenileme Butonu -->
+                                <div class="flex justify-between items-center p-[0.6rem] border-b border-[#333]">
+                                    <div class="text-[0.8rem] font-medium flex items-center" :style="{ color: phoneSettings.terminalColor }">
+                                        <i class="ri-bank-card-line mr-[0.3rem]"></i> Nearby ATMs
+                                    </div>
+                                    <button @click="checkNearbyATM(true)" 
+                                            class="text-[0.7rem] w-[1.8rem] h-[1.8rem] rounded-full bg-black/30 hover:bg-black/50 transition-colors flex items-center justify-center"
+                                            :style="{ color: phoneSettings.terminalColor }">
+                                        <i class="ri-refresh-line"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="max-h-[16rem] overflow-y-auto [&::-webkit-scrollbar]:hidden p-[0.6rem]">
+                                    <!-- ATM listesi -->
+                                    <div v-if="nearestATM" 
+                                         class="p-[0.6rem] mb-[0.4rem] rounded bg-black/20 cursor-pointer hover:bg-black/40 transition-colors"
+                                         @click="!isHackingATM && startHack('bank')"
+                                         :class="{ 'opacity-50 cursor-not-allowed': isHackingATM || nearestATM.isRobbed }"
+                                         :style="{ backgroundColor: nearestATM.isRobbed ? 'rgba(255, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.2)' }">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <div class="text-[0.9rem] font-medium" 
+                                                     :style="{ color: nearestATM.isRobbed ? '#FF0000' : phoneSettings.terminalColor }">
+                                                    ATM {{ nearestATM.isRobbed ? '(Robbed)' : '' }}
+                                                </div>
+                                                <div class="text-[0.8rem] text-gray-400">
+                                                    {{ nearestATM.location }} (<span :class="nearestATM.proximityColor">{{ Math.round(nearestATM.distance * 100) / 100 }}m</span>)
+                                                </div>
+                                            </div>
+                                            <div class="text-[0.8rem] px-[0.5rem] py-[0.2rem] rounded-full"
+                                                 :class="{
+                                                    'bg-green-900/30 text-green-500': !nearestATM.isRobbed && nearestATM.distance <= 1,
+                                                    'bg-yellow-900/30 text-yellow-500': !nearestATM.isRobbed && nearestATM.distance > 1 && nearestATM.distance <= 5,
+                                                    'bg-red-900/30 text-red-500': !nearestATM.isRobbed && nearestATM.distance > 5 || nearestATM.isRobbed
+                                                 }">
+                                                <i :class="{
+                                                    'ri-lock-unlock-fill': !nearestATM.isRobbed && nearestATM.distance <= 1,
+                                                    'ri-lock-fill': !nearestATM.isRobbed && nearestATM.distance > 1 || nearestATM.isRobbed
+                                                }"></i>
+                                                <span v-if="nearestATM.isRobbed">Robbed</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else class="text-center p-[1rem]">
+                                        <div class="text-[0.8rem] text-gray-400 mb-[0.5rem]">
+                                            No ATMs found nearby.
+                                        </div>
+                                        <button @click="checkNearbyATM(true)" 
+                                                class="text-[0.8rem] px-[0.8rem] py-[0.4rem] rounded bg-black/30 hover:bg-black/50 transition-colors flex items-center justify-center mx-auto"
+                                                :style="{ color: phoneSettings.terminalColor, borderColor: phoneSettings.terminalColor, border: '1px solid' }">
+                                            <i class="ri-radar-line mr-[0.3rem]"></i> Scan for ATMs
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- VPN Uygulaması -->
+            <div class="absolute top-0 left-0 w-full h-full bg-[#121212] z-20 overflow-y-auto [&::-webkit-scrollbar]:hidden" 
+                 :style="{ display: currentApp === 'vpn' ? 'block' : 'none' }">
+                <!-- Modern Header -->
+                <div class="bg-[#1a1a1a] p-[1.2rem] flex justify-between items-center border-b border-[#333]">
+                    <div @click="closeApp" class="cursor-pointer text-blue-500 hover:text-blue-400 transition-colors">
+                        <i class="ri-arrow-left-line text-[1.4rem]"></i>
+                    </div>
+                    <div class="text-[1.5rem] font-semibold text-white">VPN & Security</div>
+                    <div class="w-[2rem]"></div>
+                </div>
+
+                <div class="p-[1.5rem]">
+                    <!-- VPN Durum Kartı -->
+                    <div class="bg-gradient-to-br from-[#1e1e1e] to-[#252525] rounded-2xl p-[2rem] flex flex-col items-center justify-center shadow-lg border border-[#333]">
+                        <div class="relative w-[12rem] h-[12rem] mb-[2rem]">
+                            <!-- Dış Halka Animasyonu -->
+                            <div class="absolute inset-0 rounded-full border-4 border-opacity-20"
+                                 :class="vpnActive ? 'border-green-500 animate-ping' : 'border-red-500'">
+                            </div>
+                            
+                            <!-- Orta Halka -->
+                            <div class="absolute inset-2 rounded-full border-4 border-opacity-30"
+                                 :class="vpnActive ? 'border-green-500' : 'border-red-500'">
+                            </div>
+                            
+                            <!-- İç Halka ve İkon -->
+                            <div class="absolute inset-4 rounded-full flex items-center justify-center"
+                                 :class="vpnActive ? 'bg-green-900/30' : 'bg-red-900/30'">
+                                <div class="w-full h-full rounded-full flex items-center justify-center text-[3.5rem]"
+                                     :class="vpnActive ? 'text-green-500' : 'text-red-500'">
+                                    <i class="ri-shield-keyhole-fill"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- VPN Durumu -->
+                        <div class="text-[1.8rem] font-bold mb-[1rem]" :class="vpnActive ? 'text-green-500' : 'text-red-500'">
+                            {{ vpnActive ? 'VPN Active' : 'VPN Inactive' }}
+                        </div>
+                        
+                        <div class="text-gray-400 text-center mb-[2rem] text-[1.2rem] max-w-[80%]">
+                            Your connection is secure and anonymous. All your data is encrypted.
+                        </div>
+                        
+                        <button @click="toggleVPN" 
+                                class="w-full py-[1.2rem] rounded-xl text-[1.4rem] font-bold transition-all duration-300 transform hover:scale-[1.02]"
+                                :class="vpnActive ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-green-600 hover:bg-green-700 text-white'">
+                            Turn Off VPN
+                        </button>
+                    </div>
+                    
+                    <!-- Sunucu Listesi -->
+                    <div class="mt-[2rem] bg-[#1e1e1e] rounded-2xl p-[1.5rem] border border-[#333]">
+                        <div class="flex items-center justify-between mb-[1.5rem]">
+                            <h3 class="text-[1.4rem] font-semibold text-white mb-[1.5rem]">Server Selection</h3>
+                            <div class="text-gray-400 text-[1.1rem]">
+                                {{ vpnServers.length }} Servers
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-[0.8rem]">
+                            <div v-for="(server, index) in vpnServers" :key="index"
+                                 @click="selectVpnServer(index)"
+                                 class="group relative flex items-center p-[1rem] rounded-xl transition-all duration-300 cursor-pointer"
+                                 :class="selectedVpnServer === index ? 'bg-blue-900/30 border border-blue-800' : 'bg-[#252525] hover:bg-[#2a2a2a]'">
+                                <div class="w-[2.5rem] h-[2.5rem] rounded-lg flex items-center justify-center text-[1.2rem] mr-[0.8rem]"
+                                     :style="{ backgroundColor: server.color + '20', color: server.color }">
+                                    <i :class="server.icon"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-white text-[1.2rem] font-medium">{{ server.name }}</div>
+                                    <div class="text-gray-400 text-[0.9rem]">{{ server.location }}</div>
+                                </div>
+                                <div v-if="selectedVpnServer === index" 
+                                     class="w-[1.8rem] h-[1.8rem] rounded-full bg-blue-600 flex items-center justify-center">
+                                    <i class="ri-check-line text-white text-[1rem]"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Black Market Uygulaması - Optimize Edilmiş Header -->
+            <div class="absolute top-0 left-0 w-full h-full bg-[#121212] z-20 overflow-hidden"
+                :style="{ display: currentApp === 'tools' ? 'block' : 'none' }">
+            
+                <!-- Ana Market Ekranı -->
+                <div v-show="!showCart" class="h-full flex flex-col">
+                    <!-- Üst Bar - Yeniden Düzenlenmiş -->
+                    <div class="bg-[#1a1a1a]/90 backdrop-blur-md p-[1.2rem] flex items-center border-b border-[#333]">
+                        <!-- Geri Butonu -->
+                        <div @click="closeApp" class="cursor-pointer text-red-500 flex items-center">
+                            <i class="ri-arrow-left-line text-[1.4rem]"></i>
+                        </div>
+            
+                        <!-- Market Başlık ve Cüzdan -->
+                        <div class="flex-1 flex items-center justify-end space-x-[1rem]">
+                            <!-- Black Market Yazısı -->
+                            <div
+                                class="font-bold text-[1.2rem] bg-gradient-to-r from-red-500 to-purple-600 text-transparent bg-clip-text mr-[0.5rem]">
+                                Black Market
+                            </div>
+            
+                            <!-- Cüzdan -->
+                            <div class="px-[0.8rem] py-[0.3rem] rounded-full bg-black/40 border border-yellow-500/30">
+                                <span class="text-yellow-500 font-bold text-[1.1rem]">${{ formatMoney(wallet) }}</span>
+                            </div>
+            
+                            <!-- Sepet Butonu -->
+                            <div class="relative cursor-pointer" @click="showCart = true">
+                                <div class="w-[3rem] h-[3rem] rounded-full bg-red-500/20 flex items-center justify-center">
+                                    <i class="ri-shopping-cart-2-line text-[1.4rem] text-red-500"></i>
+                                    <div v-if="cart.length > 0"
+                                        class="absolute -top-[0.3rem] -right-[0.3rem] min-w-[1.8rem] h-[1.8rem] rounded-full bg-red-500 flex items-center justify-center text-white text-[0.9rem] px-[0.4rem]">
+                                        {{ cart.length }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Kategoriler - Optimize Edilmiş -->
+                    <div class="bg-[#1a1a1a]/50 py-[0.8rem]">
+                        <div class="flex overflow-x-auto px-[1rem] [&::-webkit-scrollbar]:hidden">
+                            <div class="flex space-x-[0.6rem]">
+                                <!-- Tümü Kategorisi - Özel Tasarım -->
+                                <div @click="selectCategory('all')"
+                                    class="flex items-center px-[1rem] py-[0.5rem] rounded-full cursor-pointer transition-all"
+                                    :class="selectedCategory === 'all' ? 
+                                                        'bg-gradient-to-r from-red-500 to-purple-600 shadow-lg shadow-red-500/20' : 
+                                                        'bg-[#2a2a2a] hover:bg-[#333]'">
+                                    <i class="ri-store-2-line text-[1.1rem] mr-[0.4rem]"
+                                        :class="selectedCategory === 'all' ? 'text-white' : 'text-gray-400'"></i>
+                                    <span class="text-[1rem] whitespace-nowrap font-medium"
+                                        :class="selectedCategory === 'all' ? 'text-white' : 'text-gray-400'">
+                                        All
+                                    </span>
+                                </div>
+            
+                                <!-- Diğer Kategoriler -->
+                                <div v-for="category in categories.filter(c => c.id !== 'all')" @click="selectCategory(category.id)"
+                                    class="flex items-center px-[1rem] py-[0.5rem] rounded-full cursor-pointer transition-all"
+                                    :class="selectedCategory === category.id ? 
+                                                        'bg-gradient-to-r from-red-500 to-purple-600 shadow-lg shadow-red-500/20' : 
+                                                        'bg-[#2a2a2a] hover:bg-[#333]'">
+                                    <i :class="[category.icon, 'text-[1.1rem] mr-[0.4rem]']"
+                                        :style="{ color: selectedCategory === category.id ? 'white' : '#666' }"></i>
+                                    <span class="text-[1rem] whitespace-nowrap font-medium"
+                                        :class="selectedCategory === category.id ? 'text-white' : 'text-gray-400'">
+                                        {{ category.name }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Ürün Listesi Alanı -->
+                    <div class="flex-1 overflow-y-auto p-[1rem] [&::-webkit-scrollbar]:hidden">
+                        <!-- Mevcut ürün grid yapısı aynı kalacak -->
+                        <div class="grid grid-cols-2 gap-[1rem]">
+                            <div v-for="product in filteredProducts"
+                                class="bg-[#1e1e1e]/80 rounded-xl overflow-hidden border border-white/5 hover:border-red-500/30 transition-all">
+                                <!-- Ürün Görseli -->
+                                <div class="relative h-[9rem]">
+                                    <img :src="product.image" class="w-full h-full object-cover">
+                                    <div
+                                        class="absolute top-[0.5rem] right-[0.5rem] px-[0.8rem] py-[0.3rem] rounded-full bg-black/60 backdrop-blur-sm">
+                                        <span class="text-yellow-500 font-bold text-[1rem]">${{ formatMoney(product.price) }}</span>
+                                    </div>
+                                    <div
+                                        class="absolute bottom-[0.5rem] left-[0.5rem] px-[0.8rem] py-[0.3rem] rounded-full bg-black/60 backdrop-blur-sm">
+                                        <span class="text-[0.9rem]" :class="product.stock > 0 ? 'text-green-500' : 'text-red-500'">
+                                            {{ product.stock > 0 ? `Stok: ${product.stock}` : 'Out of Stock' }}
+                                        </span>
+                                    </div>
+                                </div>
+            
+                                <!-- Ürün Bilgileri -->
+                                <div class="p-[1rem]">
+                                    <h3 class="text-[1.2rem] font-bold text-white mb-[0.4rem] line-clamp-1">{{ product.name }}</h3>
+                                    <p class="text-gray-400 text-[0.9rem] mb-[0.8rem] line-clamp-2">{{ product.description }}</p>
+            
+                                    <button @click="addToCart(product)" :disabled="product.stock <= 0"
+                                        class="w-full py-[0.8rem] rounded-lg text-[1rem] font-bold transition-all flex items-center justify-center space-x-[0.5rem]"
+                                        :class="product.stock > 0 ? 
+                                                           'bg-gradient-to-r from-red-500 to-purple-600 hover:opacity-90 text-white' : 
+                                                           'bg-gray-800 text-gray-500 cursor-not-allowed'">
+                                        <i class="ri-shopping-cart-2-line text-[1.1rem]"></i>
+                                        <span>{{ product.stock > 0 ? 'Add to Cart' : 'Out of Stock' }}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sepet Ekranı -->
+                <div v-show="showCart" class="h-full flex flex-col bg-[#121212]">
+                    <!-- Sepet Üst Bar -->
+                    <div class="bg-[#1a1a1a]/90 backdrop-blur-md p-[1.2rem] flex justify-between items-center border-b border-[#333]">
+                        <div @click="showCart = false" class="cursor-pointer text-gray-400 flex items-center">
+                            <i class="ri-arrow-left-line text-[1.4rem]"></i>
+                            <span class="ml-[0.5rem] text-[1.2rem]">Market</span>
+                        </div>
+                        <div class="text-[1.4rem] font-bold text-white">My Cart</div>
+                        <div class="w-[3rem]"></div>
+                    </div>
+
+                    <!-- Sepet İçeriği -->
+                    <div class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden">
+                        <div v-if="cart.length === 0" class="h-full flex flex-col items-center justify-center text-center p-[2rem]">
+                            <i class="ri-shopping-cart-2-line text-[4rem] text-gray-600 mb-[1rem]"></i>
+                            <p class="text-[1.4rem] text-gray-400">Your cart is empty</p>
+                            <button @click="showCart = false" 
+                                    class="mt-[2rem] px-[2rem] py-[1rem] rounded-xl bg-gradient-to-r from-red-500 to-purple-600 text-white text-[1.2rem] font-bold">
+                                Start Shopping
+                            </button>
+                        </div>
+
+                        <div v-else class="p-[1rem] space-y-[1rem]">
+                            <div v-for="(item, index) in cart" 
+                                 class="bg-[#1e1e1e] rounded-xl p-[1rem] flex items-center relative group">
+                                <!-- Ürün Görseli -->
+                                <img :src="item.image" class="w-[5rem] h-[5rem] rounded-lg object-cover">
+                                
+                                <!-- Ürün Bilgileri -->
+                                <div class="flex-1 ml-[1rem]">
+                                    <h3 class="text-white text-[1.2rem] font-medium line-clamp-1">{{ item.name }}</h3>
+                                    <div class="text-yellow-500 font-bold mt-[0.2rem]">${{ formatMoney(item.price) }}</div>
+                                    <div class="text-gray-400 text-[0.9rem]">Total: ${{ formatMoney(item.price * item.quantity) }}</div>
+                                </div>
+                                
+                                <!-- Miktar Kontrolleri -->
+                                <div class="flex flex-col items-end">
+                                    <div class="flex items-center space-x-[0.8rem] mb-[0.5rem]">
+                                        <button @click="updateCartItemQuantity(index, -1)"
+                                                class="w-[2rem] h-[2rem] rounded-full bg-[#2a2a2a] hover:bg-[#333] flex items-center justify-center transition-colors">
+                                            <i class="ri-subtract-line text-white"></i>
+                                        </button>
+                                        <span class="text-white text-[1.1rem] font-medium w-[2rem] text-center">{{ item.quantity }}</span>
+                                        <button @click="updateCartItemQuantity(index, 1)"
+                                                class="w-[2rem] h-[2rem] rounded-full bg-[#2a2a2a] hover:bg-[#333] flex items-center justify-center transition-colors">
+                                            <i class="ri-add-line text-white"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Ürünü Kaldır Butonu -->
+                                    <button @click="removeFromCart(index)" 
+                                            class="text-red-500 hover:text-red-400 text-[0.9rem] flex items-center transition-colors">
+                                        <i class="ri-delete-bin-line mr-[0.3rem]"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sepet Alt Bar -->
+                    <div v-if="cart.length > 0" class="bg-[#1a1a1a] border-t border-[#333] p-[1.2rem] space-y-[1rem]">
+                        <div class="flex justify-between items-center">
+                            <div class="text-gray-400 text-[1.2rem]">
+                                Total ({{ cart.length }} Product)
+                            </div>
+                            <div class="text-yellow-500 text-[1.6rem] font-bold">
+                                ${{ formatMoney(cartTotal) }}
+                            </div>
+                        </div>
+                        <button @click="checkout" 
+                                class="w-full py-[1rem] rounded-xl bg-gradient-to-r from-red-500 to-purple-600 text-white text-[1.3rem] font-bold hover:opacity-90 transition-all">
+                            Purchase
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ayarlar Uygulaması - iPhone Tarzı Tasarım -->
+            <div class="absolute top-0 left-0 w-full h-full bg-[#121212] z-20 overflow-hidden" 
+                 :style="{ display: currentApp === 'settings' ? 'block' : 'none' }">
+                
+                <!-- Ana Ayarlar Sayfası -->
+                <div v-show="openSubSettings === null" class="w-full h-full overflow-y-auto [&::-webkit-scrollbar]:hidden">
+                    <!-- Header -->
+                    <div class="bg-[#1a1a1a] p-[1.2rem] flex justify-between items-center border-b border-[#333]">
+                        <div @click="closeApp" class="cursor-pointer text-gray-400">
+                            <i class="ri-arrow-left-line"></i> Back
+                        </div>
+                        <div class="text-[1.5rem] font-semibold text-white">Settings</div>
+                        <div class="w-[2rem]"></div>
+                    </div>
+                    
+                    <!-- iPhone tarzı ayarlar listesi -->
+                    <div class="p-[1.5rem] space-y-[2rem]">
+                        <!-- Profil kartı - iPhone tarzı -->
+                        <div class="bg-[#1e1e1e] rounded-xl overflow-hidden">
+                            <div class="p-[1.5rem] flex items-center">
+                                <div class="w-[5rem] h-[5rem] bg-gray-700 rounded-full flex items-center justify-center text-[2rem] text-white mr-[1.2rem]">
+                                    <i class="ri-user-fill"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-white text-[1.6rem] font-medium">Raiderler</div>
+                                    <div class="text-gray-400 text-[1.2rem]">eyestore.tebex.io</div>
+                                </div>
+                                <i class="ri-arrow-right-s-line text-gray-500 text-[2rem]"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- İlk grup - Görünüm Ayarları -->
+                        <div class="space-y-[0.2rem]">
+                            <div class="px-[1rem] mb-[0.5rem]">
+                                <div class="text-gray-500 text-[1.2rem] uppercase font-medium">Appearance</div>
+                            </div>
+                            
+                            <!-- Arkaplan kartı - iPhone tarzı -->
+                            <div class="bg-[#1e1e1e] rounded-xl overflow-hidden">
+                                <div @click="openSubSettings = 'wallpaper'" class="p-[1.5rem] flex items-center justify-between border-b border-[#333] cursor-pointer">
+                                    <div class="flex items-center">
+                                        <div class="w-[3rem] h-[3rem] bg-blue-700 rounded-xl flex items-center justify-center text-[1.6rem] text-white mr-[1.2rem]">
+                                            <i class="ri-image-fill"></i>
+                                        </div>
+                                        <div class="text-white text-[1.4rem]">Background</div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-[2.5rem] h-[2.5rem] rounded-md overflow-hidden mr-[1rem]">
+                                            <img :src="phoneSettings.wallpaper" class="w-full h-full object-cover">
+                                        </div>
+                                        <i class="ri-arrow-right-s-line text-gray-500 text-[2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Çerçeve Rengi - iPhone tarzı -->
+                                <div @click="openSubSettings = 'frame'" class="p-[1.5rem] flex items-center justify-between cursor-pointer">
+                                    <div class="flex items-center">
+                                        <div class="w-[3rem] h-[3rem] bg-purple-700 rounded-xl flex items-center justify-center text-[1.6rem] text-white mr-[1.2rem]">
+                                            <i class="ri-smartphone-line"></i>
+                                        </div>
+                                        <div class="text-white text-[1.4rem]">Frame Color</div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-[2.5rem] h-[2.5rem] rounded-full mr-[1rem]" :style="{ backgroundColor: phoneSettings.frameColor }"></div>
+                                        <i class="ri-arrow-right-s-line text-gray-500 text-[2rem]"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Çerçeve Rengi Seçenekleri -->
+                                <div v-if="openSubSettings === 'frame'" class="p-[1.5rem] border-t border-[#333]">
+                                    <div class="grid grid-cols-4 gap-[1rem]">
+                                        <div v-for="(color, index) in frameColors" 
+                                             :key="index"
+                                             @click="changeFrameColor(color)"
+                                             class="w-[4rem] h-[4rem] rounded-full cursor-pointer transition-all duration-200 hover:scale-110 flex items-center justify-center"
+                                             :class="phoneSettings.frameColor === color ? 'border-2 border-white shadow-lg' : ''"
+                                             :style="{ backgroundColor: color }">
+                                            <i v-if="phoneSettings.frameColor === color" class="ri-check-line text-white text-[1.5rem]"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- İkinci grup - Terminal Ayarları -->
+                        <div class="space-y-[0.2rem]">
+                            <div class="px-[1rem] mb-[0.5rem]">
+                                <div class="text-gray-500 text-[1.2rem] uppercase font-medium">Terminal</div>
+                            </div>
+                            
+                            <div class="bg-[#1e1e1e] rounded-xl overflow-hidden">
+                                <!-- Terminal Metin Rengi - iPhone tarzı -->
+                                <div @click="openSubSettings = 'terminalColor'" class="p-[1.5rem] flex items-center justify-between border-b border-[#333] cursor-pointer">
+                                    <div class="flex items-center">
+                                        <div class="w-[3rem] h-[3rem] bg-green-700 rounded-xl flex items-center justify-center text-[1.6rem] text-white mr-[1.2rem]">
+                                            <i class="ri-palette-fill"></i>
+                                        </div>
+                                        <div class="text-white text-[1.4rem]">Text Colour</div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-[2.5rem] h-[2.5rem] rounded-md mr-[1rem]" :style="{ backgroundColor: phoneSettings.terminalColor }"></div>
+                                        <i class="ri-arrow-right-s-line text-gray-500 text-[2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Terminal Font Tipi - iPhone tarzı -->
+                                <div @click="openSubSettings = 'terminalFont'" class="p-[1.5rem] flex items-center justify-between cursor-pointer">
+                                    <div class="flex items-center">
+                                        <div class="w-[3rem] h-[3rem] bg-red-700 rounded-xl flex items-center justify-center text-[1.6rem] text-white mr-[1.2rem]">
+                                            <i class="ri-font-size"></i>
+                                        </div>
+                                        <div class="text-white text-[1.4rem]">Font</div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="text-gray-400 mr-[1rem]" :style="{ fontFamily: phoneSettings.terminalFont }">
+                                            {{ phoneSettings.terminalFont }}
+                                        </div>
+                                        <i class="ri-arrow-right-s-line text-gray-500 text-[2rem]"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Üçüncü grup - Güvenlik ve Gizlilik -->
+                        <div class="space-y-[0.2rem]">
+                            <div class="px-[1rem] mb-[0.5rem]">
+                                <div class="text-gray-500 text-[1.2rem] uppercase font-medium">Security</div>
+                            </div>
+                            
+                            <div class="bg-[#1e1e1e] rounded-xl overflow-hidden">
+                                <!-- VPN Ayarları - iPhone tarzı -->
+                                <div @click="openVPNFromSettings()" class="p-[1.5rem] flex items-center justify-between cursor-pointer">
+                                    <div class="flex items-center">
+                                        <div class="w-[3rem] h-[3rem] bg-blue-700 rounded-xl flex items-center justify-center text-[1.6rem] text-white mr-[1.2rem]">
+                                            <i class="ri-shield-keyhole-fill"></i>
+                                        </div>
+                                        <div class="text-white text-[1.4rem]">VPN</div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="vpn-indicator mr-[1rem]" :class="vpnActive ? 'text-green-500' : 'text-red-500'">
+                                            {{ vpnActive ? 'On' : 'Off' }}
+                                        </div>
+                                        <i class="ri-arrow-right-s-line text-gray-500 text-[2rem]"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Dördüncü grup - Sistem -->
+                        <div class="space-y-[0.2rem]">
+                            <div class="px-[1rem] mb-[0.5rem]">
+                                <div class="text-gray-500 text-[1.2rem] uppercase font-medium">System</div>
+                            </div>
+                            
+                            <div class="bg-[#1e1e1e] rounded-xl overflow-hidden">
+                                <!-- Sürüm Bilgisi - iPhone tarzı -->
+                                <div class="p-[1.5rem] flex items-center justify-between border-b border-[#333]">
+                                    <div class="flex items-center">
+                                        <div class="w-[3rem] h-[3rem] bg-gray-700 rounded-xl flex items-center justify-center text-[1.6rem] text-white mr-[1.2rem]">
+                                            <i class="ri-information-fill"></i>
+                                        </div>
+                                        <div class="text-white text-[1.4rem]">Version</div>
+                                    </div>
+                                    <div class="text-gray-400">v1.0.1</div>
+                                </div>
+                                
+                                <!-- Hakkında - iPhone tarzı -->
+                                <div @click="openSubSettings = 'about'" class="p-[1.5rem] flex items-center justify-between cursor-pointer">
+                                    <div class="flex items-center">
+                                        <div class="w-[3rem] h-[3rem] bg-gray-700 rounded-xl flex items-center justify-center text-[1.6rem] text-white mr-[1.2rem]">
+                                            <i class="ri-file-info-fill"></i>
+                                        </div>
+                                        <div class="text-white text-[1.4rem]">About</div>
+                                    </div>
+                                    <i class="ri-arrow-right-s-line text-gray-500 text-[2rem]"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alt menüler - Absolute pozisyonlama ile -->
+                <!-- Arkaplan Alt Menüsü -->
+                <div class="absolute top-0 left-0 w-full h-full bg-[#121212] overflow-y-auto [&::-webkit-scrollbar]:hidden"
+                    v-if="openSubSettings === 'wallpaper'">
+                    <div class="bg-[#1a1a1a] p-[1.2rem] flex justify-between items-center border-b border-[#333]">
+                        <div @click="openSubSettings = null" class="cursor-pointer text-gray-400">
+                            <i class="ri-arrow-left-line"></i> Settings
+                        </div>
+                        <div class="text-[1.5rem] font-semibold text-white">Background</div>
+                        <div class="w-[2rem]"></div>
+                    </div>
+                    <div class="p-[1.5rem]">
+                        <div class="bg-[#1e1e1e] rounded-xl p-[1.5rem]">
+                            <h3 class="text-[1.4rem] font-semibold text-white mb-[1rem]">Select Wallpaper</h3>
+                            <div class="grid grid-cols-2 gap-[1rem]">
+                                <div v-for="(wallpaper, index) in wallpapers" :key="'wp'+index"
+                                    class="aspect-[9/16] rounded-xl overflow-hidden cursor-pointer relative"
+                                    @click="phoneSettings.wallpaper = wallpaper; saveSettings()">
+                                    <img :src="wallpaper" class="w-full h-full object-cover">
+                                    <div v-if="phoneSettings.wallpaper === wallpaper"
+                                        class="absolute inset-0 bg-blue-500/30 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[3rem]"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Custom URL Addition Section -->
+                            <div class="mt-[2rem] border-t border-gray-700 pt-[1.5rem]">
+                                <h3 class="text-[1.4rem] font-semibold text-white mb-[1rem]">Custom Background URL</h3>
+                                <div class="flex flex-col space-y-[1rem]">
+                                    <input type="text" v-model="customWallpaperUrl" placeholder="https://example.com/image.jpg"
+                                        class="w-full bg-[#252525] border border-gray-700 rounded-lg px-[1rem] py-[0.8rem] text-white outline-none focus:border-blue-500 transition-colors">
+                                    <button @click="setCustomWallpaper()"
+                                        class="w-full bg-blue-600 text-white py-[0.8rem] rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                                        Apply
+                                    </button>
+                                </div>
+                                <div class="text-gray-400 text-[1rem] mt-[0.5rem]">
+                                    You can use your own background by adding an image URL.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            <!-- Frame Color Submenu - Modified Version -->
+            <div v-if="openSubSettings === 'frame'"
+                class="absolute top-0 left-0 w-full h-full bg-[#121212] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+                <div class="bg-[#1a1a1a] p-[1.2rem] flex justify-between items-center border-b border-[#333]">
+                    <div @click="openSubSettings = null" class="cursor-pointer text-gray-400">
+                        <i class="ri-arrow-left-line"></i> Settings
+                    </div>
+                    <div class="text-[1.5rem] font-semibold text-white">Frame Color</div>
+                    <div class="w-[2rem]"></div>
+                </div>
+                <div class="p-[1.5rem]">
+                    <!-- Phone Preview - More Prominent Frame -->
+                    <div class="bg-[#1a1a1a] rounded-xl p-[1.5rem] mb-[1.5rem] flex justify-center">
+                        <div class="w-[10rem] h-[20rem] rounded-[2rem] border-[0.6rem] flex items-center justify-center shadow-lg relative overflow-hidden"
+                            :style="{ borderColor: phoneSettings.frameColor, backgroundColor: '#000000' }">
+            
+                            <!-- Notch -->
+                            <div
+                                class="absolute w-[3rem] h-[0.8rem] bg-black rounded-full top-0 left-1/2 transform -translate-x-1/2">
+                            </div>
+            
+                            <!-- Screen Content -->
+                            <div
+                                class="w-full h-full rounded-[1rem] flex flex-col justify-between items-center relative overflow-hidden">
+                                <!-- Background Wallpaper -->
+                                <div class="absolute inset-0 w-full h-full">
+                                    <img :src="phoneSettings.wallpaper" class="w-full h-full object-cover" alt="Wallpaper">
+            
+                                    <!-- Wavy Background Effects -->
+                                    <div class="absolute inset-0 w-full h-full">
+                                        <!-- Blue Wave -->
+                                        <div
+                                            class="absolute w-full h-[30%] top-[20%] bg-gradient-to-b from-blue-600/20 to-transparent rounded-[50%] transform scale-x-[1.2]">
+                                        </div>
+            
+                                        <!-- Orange Wave -->
+                                        <div
+                                            class="absolute w-full h-[30%] top-[50%] bg-gradient-to-b from-orange-600/30 to-transparent rounded-[50%] transform scale-x-[1.2]">
+                                        </div>
+            
+                                        <!-- Purple Wave -->
+                                        <div
+                                            class="absolute w-full h-[30%] bottom-0 bg-gradient-to-b from-purple-600/20 to-transparent rounded-[50%] transform scale-x-[1.2]">
+                                        </div>
+                                    </div>
+                                </div>
+            
+                                <!-- Top Section - Time -->
+                                <div class="relative z-10 w-full pt-[1rem] px-[0.5rem]">
+                                    <div class="text-white text-[0.8rem] font-medium text-center">{{ currentTime }}</div>
+                                </div>
+            
+                                <!-- Middle Section - Applications -->
+                                <div class="relative z-10 w-full flex flex-wrap justify-center gap-[0.5rem] px-[0.5rem]">
+                                    <!-- Terminal -->
+                                    <div class="w-[2rem] h-[2rem] rounded-xl bg-black flex items-center justify-center shadow-lg">
+                                        <i class="ri-terminal-box-fill text-white text-[1rem]"></i>
+                                    </div>
+            
+                                    <!-- VPN -->
+                                    <div
+                                        class="w-[2rem] h-[2rem] rounded-xl bg-blue-600 flex items-center justify-center shadow-lg">
+                                        <i class="ri-shield-keyhole-fill text-white text-[1rem]"></i>
+                                    </div>
+            
+                                    <!-- Store -->
+                                    <div class="w-[2rem] h-[2rem] rounded-xl bg-red-600 flex items-center justify-center shadow-lg">
+                                        <i class="ri-shopping-bag-fill text-white text-[1rem]"></i>
+                                    </div>
+                                </div>
+            
+                                <!-- Settings Application -->
+                                <div class="relative z-10 w-full flex justify-center mt-[1rem]">
+                                    <div
+                                        class="w-[2rem] h-[2rem] rounded-xl bg-gray-700 flex items-center justify-center shadow-lg">
+                                        <i class="ri-settings-fill text-white text-[1rem]"></i>
+                                    </div>
+                                </div>
+            
+                                <!-- Bottom Section - Dock -->
+                                <div class="relative z-10 w-full flex justify-center gap-[0.5rem] pb-[1rem] px-[0.5rem] mt-[2rem]">
+                                    <div
+                                        class="w-[6rem] h-[2.5rem] rounded-xl bg-black/50 backdrop-blur-md flex items-center justify-around p-[0.3rem]">
+                                        <!-- Terminal -->
+                                        <div class="w-[1.5rem] h-[1.5rem] rounded-lg bg-black flex items-center justify-center">
+                                            <i class="ri-terminal-box-fill text-white text-[0.8rem]"></i>
+                                        </div>
+            
+                                        <!-- VPN -->
+                                        <div class="w-[1.5rem] h-[1.5rem] rounded-lg bg-blue-600 flex items-center justify-center">
+                                            <i class="ri-shield-keyhole-fill text-white text-[0.8rem]"></i>
+                                        </div>
+            
+                                        <!-- Store -->
+                                        <div class="w-[1.5rem] h-[1.5rem] rounded-lg bg-red-600 flex items-center justify-center">
+                                            <i class="ri-shopping-bag-fill text-white text-[0.8rem]"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Color Picker - Modern Design -->
+                    <div class="bg-[#1e1e1e] rounded-xl p-[1.5rem] mb-[1.5rem] shadow-lg">
+                        <h3 class="text-[1.4rem] font-semibold text-white mb-[1.5rem] text-center">Frame Colors</h3>
+                            
+                            <!-- Renk Grid Düzeni - Daha modern görünüm -->
+                            <div class="grid grid-cols-4 gap-[1rem] mb-[1.5rem]">
+                                <!-- Silver (Gümüş) -->
+                                <div @click="changeFrameColor('#C0C0C0')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#C0C0C0' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #C0C0C0, #E8E8E8)', boxShadow: phoneSettings.frameColor === '#C0C0C0' ? '0 0 15px #C0C0C0' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#C0C0C0'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Gold (Altın) -->
+                                <div @click="changeFrameColor('#FFD700')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#FFD700' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #FFD700, #FFC107)', boxShadow: phoneSettings.frameColor === '#FFD700' ? '0 0 15px #FFD700' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#FFD700'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Rose Gold -->
+                                <div @click="changeFrameColor('#B76E79')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#B76E79' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #B76E79, #E0A9A9)', boxShadow: phoneSettings.frameColor === '#B76E79' ? '0 0 15px #B76E79' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#B76E79'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Space Gray -->
+                                <div @click="changeFrameColor('#121212')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#121212' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #121212, #2D2D2D)', boxShadow: phoneSettings.frameColor === '#121212' ? '0 0 15px #121212' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#121212'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Midnight Blue -->
+                                <div @click="changeFrameColor('#191970')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#191970' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #191970, #2C2C8C)', boxShadow: phoneSettings.frameColor === '#191970' ? '0 0 15px #191970' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#191970'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Emerald Green -->
+                                <div @click="changeFrameColor('#046307')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#046307' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #046307, #0A8F0F)', boxShadow: phoneSettings.frameColor === '#046307' ? '0 0 15px #046307' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#046307'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Ruby Red -->
+                                <div @click="changeFrameColor('#9B111E')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#9B111E' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #9B111E, #C41E3A)', boxShadow: phoneSettings.frameColor === '#9B111E' ? '0 0 15px #9B111E' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#9B111E'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Titanium -->
+                                <div @click="changeFrameColor('#878681')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#878681' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #878681, #A8A8A3)', boxShadow: phoneSettings.frameColor === '#878681' ? '0 0 15px #878681' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#878681'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Deep Purple -->
+                                <div @click="changeFrameColor('#301934')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#301934' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #301934, #4B0082)', boxShadow: phoneSettings.frameColor === '#301934' ? '0 0 15px #301934' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#301934'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Teal -->
+                                <div @click="changeFrameColor('#008080')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#008080' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #008080, #20B2AA)', boxShadow: phoneSettings.frameColor === '#008080' ? '0 0 15px #008080' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#008080'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Coral -->
+                                <div @click="changeFrameColor('#FF7F50')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#FF7F50' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #FF7F50, #FF6347)', boxShadow: phoneSettings.frameColor === '#FF7F50' ? '0 0 15px #FF7F50' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#FF7F50'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Slate Blue -->
+                                <div @click="changeFrameColor('#6A5ACD')" 
+                                     class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105 flex items-center justify-center"
+                                     :class="phoneSettings.frameColor === '#6A5ACD' ? 'border-white shadow-lg' : 'border-transparent'"
+                                     :style="{ background: 'linear-gradient(145deg, #6A5ACD, #483D8B)', boxShadow: phoneSettings.frameColor === '#6A5ACD' ? '0 0 15px #6A5ACD' : 'none' }">
+                                    <div v-if="phoneSettings.frameColor === '#6A5ACD'" class="w-[2rem] h-[2rem] rounded-full bg-black/50 flex items-center justify-center">
+                                        <i class="ri-check-line text-white text-[1.2rem]"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Terminal Text Color Submenu - Modernized Design -->
+                <div v-if="openSubSettings === 'terminalColor'"
+                    class="absolute top-0 left-0 w-full h-full bg-[#121212] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+                    <div class="bg-[#1a1a1a] p-[1.2rem] flex justify-between items-center border-b border-[#333]">
+                        <div @click="openSubSettings = null" class="cursor-pointer text-gray-400">
+                            <i class="ri-arrow-left-line"></i> Settings
+                        </div>
+                        <div class="text-[1.5rem] font-semibold text-white">Terminal Color</div>
+                        <div class="w-[2rem]"></div>
+                    </div>
+                    <div class="p-[1.5rem]">
+                        <!-- Preview Screen - Smaller and Single Line -->
+                        <div class="bg-black rounded-xl p-[1.2rem] mb-[1.5rem] border border-gray-800 shadow-lg">
+                            <div class="text-[1.4rem] font-mono flex items-center" :style="{ color: phoneSettings.terminalColor }">
+                                <span class="mr-2">$</span> hack.sh --target system <span class="ml-2 animate-pulse">_</span>
+                            </div>
+                        </div>
+                
+                        <!-- Color Picker - Modern Design -->
+                        <div class="bg-[#1e1e1e] rounded-xl p-[1.5rem] mb-[1.5rem] shadow-lg">
+                            <h3 class="text-[1.4rem] font-semibold text-white mb-[1.5rem] text-center">Popular Colors</h3>
+                
+                            <!-- Color Grid Layout - More Modern Appearance -->
+                            <div class="grid grid-cols-4 gap-[1rem] mb-[1.5rem]">
+                                <div v-for="color in ['#00FF00', '#FF0000', '#0000FF', '#FFFFFF', '#00FFFF', '#FF00FF', '#FFFF00', '#FF5500']"
+                                    :key="color" @click="phoneSettings.terminalColor = color"
+                                    class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105"
+                                    :class="phoneSettings.terminalColor === color ? 'border-white shadow-lg' : 'border-transparent'"
+                                    :style="{ backgroundColor: color, boxShadow: phoneSettings.terminalColor === color ? `0 0 15px ${color}` : 'none' }">
+                                </div>
+                            </div>
+                
+                            <h3 class="text-[1.4rem] font-semibold text-white mb-[1.5rem] text-center">Neon Colors</h3>
+                
+                            <div class="grid grid-cols-4 gap-[1rem]">
+                                <div v-for="color in ['#39FF14', '#FE019A', '#00FFFF', '#FFF01F', '#FF073A', '#BC13FE', '#04D9FF', '#01FFC3']"
+                                    :key="color" @click="phoneSettings.terminalColor = color"
+                                    class="aspect-square rounded-xl cursor-pointer border-2 transition-all hover:scale-105"
+                                    :class="phoneSettings.terminalColor === color ? 'border-white shadow-lg' : 'border-transparent'"
+                                    :style="{ backgroundColor: color, boxShadow: phoneSettings.terminalColor === color ? `0 0 15px ${color}` : 'none' }">
+                                </div>
+                            </div>
+                        </div>
+                
+                        <!-- Custom Color Picker - More Compact -->
+                        <div class="bg-[#1e1e1e] rounded-xl p-[1.5rem] shadow-lg">
+                            <h3 class="text-[1.4rem] font-semibold text-white mb-[1.5rem] text-center">Custom Color</h3>
+                
+                            <!-- Color Preview -->
+                            <div class="w-full h-[4rem] rounded-xl mb-[1.5rem] flex items-center justify-center"
+                                :style="{ backgroundColor: customColor || '#00FF00', border: '2px solid white' }">
+                            </div>
+                
+                            <!-- RGB Sliders - Compact Design -->
+                            <div class="grid grid-cols-3 gap-[1rem] mb-[1.5rem]">
+                                <!-- Red -->
+                                <div class="bg-[#2a1e1e] rounded-lg p-[1rem] border border-red-900">
+                                    <div class="text-red-500 font-bold text-center mb-[0.5rem]">R</div>
+                                    <input type="range" min="0" max="255" v-model.number="rgbValues.r" @input="updateCustomColor"
+                                        class="w-full accent-red-500 mb-[0.5rem]">
+                                    <div class="text-white text-center">{{ rgbValues.r }}</div>
+                                </div>
+                
+                                <!-- Green -->
+                                <div class="bg-[#1e2a1e] rounded-lg p-[1rem] border border-green-900">
+                                    <div class="text-green-500 font-bold text-center mb-[0.5rem]">G</div>
+                                    <input type="range" min="0" max="255" v-model.number="rgbValues.g" @input="updateCustomColor"
+                                        class="w-full accent-green-500 mb-[0.5rem]">
+                                    <div class="text-white text-center">{{ rgbValues.g }}</div>
+                                </div>
+                
+                                <!-- Blue -->
+                                <div class="bg-[#1e1e2a] rounded-lg p-[1rem] border border-blue-900">
+                                    <div class="text-blue-500 font-bold text-center mb-[0.5rem]">B</div>
+                                    <input type="range" min="0" max="255" v-model.number="rgbValues.b" @input="updateCustomColor"
+                                        class="w-full accent-blue-500 mb-[0.5rem]">
+                                    <div class="text-white text-center">{{ rgbValues.b }}</div>
+                                </div>
+                            </div>
+                
+                            <!-- Apply Button -->
+                            <button @click="phoneSettings.terminalColor = customColor"
+                                class="w-full py-[1rem] bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white font-bold text-[1.3rem] shadow-lg">
+                                Apply This Color
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Terminal Font Tipi Alt Menüsü -->
+                <div v-if="openSubSettings === 'terminalFont'">
+                    <div class="bg-[#1a1a1a] p-[1.2rem] flex justify-between items-center border-b border-[#333]">
+                        <div @click="openSubSettings = null" class="cursor-pointer text-gray-400">
+                            <i class="ri-arrow-left-line"></i> Settings
+                        </div>
+                        <div class="text-[1.5rem] font-semibold text-white">Font</div>
+                        <div class="w-[2rem]"></div>
+                    </div>
+                    <div class="p-[1.5rem]">
+                        <div class="bg-[#1e1e1e] rounded-xl p-[1.5rem]">
+                            <h3 class="text-[1.4rem] font-semibold text-white mb-[1rem]">Font Selection</h3>
+                            <div class="space-y-[1rem]">
+                                <div class="p-[1.2rem] rounded-lg bg-[#252525] cursor-pointer"
+                                     :class="phoneSettings.terminalFont === 'monospace' ? 'border border-blue-500' : ''"
+                                     @click="phoneSettings.terminalFont = 'monospace'">
+                                    <div class="text-[1.6rem]" style="font-family: monospace; color: white;">
+                                        Monospace
+                                        <div class="text-[1.2rem] text-gray-400">Terminal commands appear here</div>
+                                    </div>
+                                    <div v-if="phoneSettings.terminalFont === 'monospace'" class="mt-[0.5rem] text-blue-500">
+                                        <i class="ri-check-line"></i> Selected
+                                    </div>
+                                </div>
+                                
+                                <div class="p-[1.2rem] rounded-lg bg-[#252525] cursor-pointer"
+                                     :class="phoneSettings.terminalFont === 'courier' ? 'border border-blue-500' : ''"
+                                     @click="phoneSettings.terminalFont = 'courier'">
+                                    <div class="text-[1.6rem]" style="font-family: 'Courier New', courier; color: white;">
+                                        Courier
+                                        <div class="text-[1.2rem] text-gray-400">Terminal commands appear here</div>
+                                    </div>
+                                    <div v-if="phoneSettings.terminalFont === 'courier'" class="mt-[0.5rem] text-blue-500">
+                                        <i class="ri-check-line"></i> Selected
+                                    </div>
+                                </div>
+                                
+                                <div class="p-[1.2rem] rounded-lg bg-[#252525] cursor-pointer"
+                                     :class="phoneSettings.terminalFont === 'consolas' ? 'border border-blue-500' : ''"
+                                     @click="phoneSettings.terminalFont = 'consolas'">
+                                    <div class="text-[1.6rem]" style="font-family: consolas, monospace; color: white;">
+                                        Consolas
+                                        <div class="text-[1.2rem] text-gray-400">Terminal commands appear here</div>
+                                    </div>
+                                    <div v-if="phoneSettings.terminalFont === 'consolas'" class="mt-[0.5rem] text-blue-500">
+                                        <i class="ri-check-line"></i> Selected
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hakkında Alt Menüsü -->
+                <div v-if="openSubSettings === 'about'">
+                    <div class="bg-[#1a1a1a] p-[1.2rem] flex justify-between items-center border-b border-[#333]">
+                        <div @click="openSubSettings = null" class="cursor-pointer text-gray-400">
+                            <i class="ri-arrow-left-line"></i> Ayarlar
+                        </div>
+                        <div class="text-[1.5rem] font-semibold text-white">About</div>
+                        <div class="w-[2rem]"></div>
+                    </div>
+                    <div class="p-[1.5rem]">
+                        <div class="bg-[#1e1e1e] rounded-xl p-[1.5rem]">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="w-[8rem] h-[8rem] rounded-2xl bg-gradient-to-br from-black to-gray-800 flex items-center justify-center text-[4rem] text-white mb-[1.5rem]">
+                                    <i class="ri-terminal-box-fill"></i>
+                                </div>
+                                <div class="text-white text-[1.8rem] font-semibold mb-[0.5rem]">Hacker Phone</div>
+                                <div class="text-gray-400 text-[1.2rem] mb-[1.5rem]">Model: HX-2000</div>
+                                
+                                <div class="w-full space-y-[0.8rem]">
+                                    <div class="flex justify-between py-[0.8rem] border-b border-[#333]">
+                                        <div class="text-gray-400">Software Version</div>
+                                        <div class="text-white">1.0.1 (3B110)</div>
+                                    </div>
+                                    <div class="flex justify-between py-[0.8rem] border-b border-[#333]">
+                                        <div class="text-gray-400">Serial Number</div>
+                                        <div class="text-white">HX2023000089X</div>
+                                    </div>
+                                    <div class="flex justify-between py-[0.8rem]">
+                                        <div class="text-gray-400">Manufacturer</div>
+                                        <div class="text-white">Dark Web Labs</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./assets/data.js"></script>
+    <script src="./vue.js"></script>
+</body>
+
+</html>
+

@@ -1,0 +1,282 @@
+[
+    {
+        "model": "weapon_pistol50",
+        "description": "Powerful and effective handgun.",
+        "stock": 5,
+        "image": "https://silahalimsatim.com/wp-content/uploads/2024/06/569340.jpeg",
+        "price": 1200,
+        "id": 1,
+        "category": "weapons",
+        "name": "Desert Eagle"
+    },
+    {
+        "model": "weapon_assaultrifle",
+        "description": "Reliable assault rifle.",
+        "stock": 0,
+        "image": "https://img.gta5-mods.com/q75/images/akms-animated/7c97be-akms1.png",
+        "price": 2500,
+        "id": 2,
+        "category": "weapons",
+        "name": "AK-47"
+    },
+    {
+        "model": "weapon_pumpshotgun",
+        "description": "Effective at close range.",
+        "stock": 0,
+        "image": "https://img.gta5-mods.com/q75/images/remington-m870-sawn-off/7bdd54-20180403230247_1.jpg",
+        "price": 1800,
+        "id": 3,
+        "category": "weapons",
+        "name": "Combat Shotgun"
+    },
+    {
+        "model": "weapon_sniperrifle",
+        "description": "Long-range precision weapon.",
+        "stock": 0,
+        "image": "https://img.gta5-mods.com/q95/images/fallout-4-anti-material-rifle-animated/bc3bc2-Pic.jpg",
+        "price": 3500,
+        "id": 4,
+        "category": "weapons",
+        "name": "Sniper Rifle"
+    },
+    {
+        "model": "weapon_combatpistol",
+        "description": "Standard sidearm.",
+        "stock": 15,
+        "image": "https://files.libertycity.net/download/gta5_weapons/thumbs/2024-01/ron-colt-m45a1-cqbp-fivem-sp_1705239460_439222.webp",
+        "price": 900,
+        "id": 5,
+        "category": "weapons",
+        "name": "Combat Pistol"
+    },
+    {
+        "model": "weapon_smg",
+        "description": "Close-quarters automatic weapon.",
+        "stock": 5,
+        "image": "https://img.gta5-mods.com/q95/images/ron-hk-ump-9/41ea8a-218_20240209142525_1-min.png",
+        "price": 1750,
+        "id": 6,
+        "category": "weapons",
+        "name": "SMG"
+    },
+    {
+        "model": "weapon_knife",
+        "description": "Silent and deadly melee weapon.",
+        "stock": 20,
+        "image": "https://img.gta5-mods.com/q95/images/kitchen-knife-domax/3ff5ac-218_20230608124850_1.png",
+        "price": 450,
+        "id": 7,
+        "category": "weapons",
+        "name": "Knife"
+    },
+    {
+        "model": "medikit",
+        "description": "Advanced medical kit for serious injuries.",
+        "stock": 12,
+        "image": "https://orcz.com/images/thumb/6/66/Gtavfirstaidkit.jpg/400px-Gtavfirstaidkit.jpg",
+        "price": 750,
+        "id": 8,
+        "category": "meds",
+        "name": "Medikit"
+    },
+    {
+        "model": "adrenaline",
+        "description": "Emergency injection for quick recovery.",
+        "stock": 8,
+        "image": "https://media.istockphoto.com/id/909788822/photo/pile-of-used-syringes-everyday-drug-therapy.jpg?s=612x612&w=0&k=20&c=LFhMBiBFh7D8I3MuB4fWxeYIJMtngd9F3-CMvjcQlzI=",
+        "price": 1200,
+        "id": 9,
+        "category": "meds",
+        "name": "Adrenaline Shot"
+    },
+    {
+        "model": "bandage",
+        "description": "Basic first aid for minor injuries.",
+        "stock": 25,
+        "image": "https://media.sketchfab.com/models/f4472a07016248d5b7d3d061a6b2dd9f/thumbnails/fd249c7e92e94af1ad5a924a224fefe6/7865948bbadb4512a36db2cdedf51b1f.jpeg",
+        "price": 300,
+        "id": 10,
+        "category": "meds",
+        "name": "Bandage"
+    },
+    {
+        "model": "painkillers",
+        "description": "Temporary pain relief medication.",
+        "stock": 30,
+        "image": "https://images.free3d.com/imgd/l37189-battle-grounds-pain-reliever-8060.jpg",
+        "price": 200,
+        "id": 11,
+        "category": "meds",
+        "name": "Painkillers"
+    },
+    {
+        "model": "morphine",
+        "description": "Strong painkiller for severe injuries.",
+        "stock": 10,
+        "image": "https://gray-kpho-prod.gtv-cdn.com/resizer/v2/PZRQXVTPNRADPHU5UITWT2Z3GQ.jpg?auth=5ab571ac841cd7344e881eb6d5603b1634a9cd046203072439f49add9ff18fc4&width=1200&height=600&smart=true",
+        "price": 550,
+        "id": 12,
+        "category": "meds",
+        "name": "Morphine"
+    },
+    {
+        "model": "armor",
+        "description": "Protective armor against gunfire.",
+        "stock": 10,
+        "image": "https://s3-screenshots.int-cdn.lcpdfrusercontent.com/monthly_2021_08/15.jpg.8e8667b3c762a8a69df2a7e9e55e1dcf.jpg",
+        "price": 1500,
+        "id": 13,
+        "category": "equipment",
+        "name": "Bulletproof Vest"
+    },
+    {
+        "model": "handcuffs",
+        "description": "Restraining device for detaining individuals.",
+        "stock": 15,
+        "image": "https://s3-screenshots.int-cdn.lcpdfrusercontent.com/monthly_2019_02/bigstock-Police-law-steel-handcuffs-arr-35095877.jpg.bdfe32b555a4cc3926b59be4cf623ffa.jpg",
+        "price": 400,
+        "id": 14,
+        "category": "equipment",
+        "name": "Handcuffs"
+    },
+    {
+        "model": "lockpick",
+        "description": "Tool for opening locked doors and vehicles.",
+        "stock": 20,
+        "image": "https://media.fab.com/image_previews/gallery_images/5b264009-bca4-48f9-9fd6-70316b8cd5f8/ec7d475a-e3fe-4a2c-95fb-119c84d7c4b9.jpg",
+        "price": 350,
+        "id": 15,
+        "category": "equipment",
+        "name": "Lockpick"
+    },
+    {
+        "model": "radio_scanner",
+        "description": "Device for intercepting radio communications.",
+        "stock": 8,
+        "image": "https://cdn.ecommercedns.uk/files/7/226987/0/44991130/whistler-ws1065.png",
+        "price": 800,
+        "id": 16,
+        "category": "equipment",
+        "name": "Radio Scanner"
+    },
+    {
+        "model": "binoculars",
+        "description": "Optical device for surveillance at a distance.",
+        "stock": 12,
+        "image": "https://fivemx.com/wp-content/uploads/2024/02/fivem-binoculars.jpg",
+        "price": 300,
+        "id": 17,
+        "category": "equipment",
+        "name": "Binoculars"
+    },
+    {
+        "model": "nvgoggles",
+        "description": "Device for seeing in low light conditions.",
+        "stock": 5,
+        "image": "https://static.wikia.nocookie.net/gtawiki/images/b/b3/Night_Vision_GTAO.png/revision/latest?cb=20150325063345",
+        "price": 1200,
+        "id": 18,
+        "category": "equipment",
+        "name": "Night Vision Goggles"
+    },
+    {
+        "model": "laptop",
+        "description": "Portable computer for hacking operations.",
+        "stock": 7,
+        "image": "https://cf-images.dustin.eu/cdn-cgi/image/fit=contain,format=auto,quality=75,width=828,fit=contain/image/d2000010011197891/microsoft-surface-laptop-go-3-core-i5-16gb-512gb-124.jpeg",
+        "price": 2500,
+        "id": 19,
+        "category": "hacktools",
+        "name": "Laptop"
+    },
+    {
+        "model": "advancedlockpick",
+        "description": "Professional tool for bypassing security systems.",
+        "stock": 10,
+        "image": "https://m.media-amazon.com/images/I/71vyvY69WpL.jpg",
+        "price": 750,
+        "id": 20,
+        "category": "hacktools",
+        "name": "Advanced Lockpick"
+    },
+    {
+        "model": "trojan_usb",
+        "description": "Device for installing malware on computer systems.",
+        "stock": 5,
+        "image": "https://regmedia.co.uk/2016/03/08/usb.jpg",
+        "price": 1500,
+        "id": 21,
+        "category": "hacktools",
+        "name": "Trojan USB"
+    },
+    {
+        "model": "electronickit",
+        "description": "Electronic tool for breaking into security systems.",
+        "stock": 6,
+        "image": "https://www.bekafun.com/s/image/53704956/2000/2000/Elgato-Stream-Deck",
+        "price": 2000,
+        "id": 22,
+        "category": "hacktools",
+        "name": "Hacking Device"
+    },
+    {
+        "model": "signaljammer",
+        "description": "Device for disrupting electronic communications.",
+        "stock": 4,
+        "image": "https://static.wikia.nocookie.net/starwars/images/3/3d/Jammer_Beta.png/revision/latest?cb=20150802142523",
+        "price": 1800,
+        "id": 23,
+        "category": "hacktools",
+        "name": "Signal Jammer"
+    },
+    {
+        "model": "fake_id",
+        "description": "Counterfeit identification document.",
+        "stock": 8,
+        "image": "https://m.media-amazon.com/images/I/61k+xMg3I7L.jpg",
+        "price": 1000,
+        "id": 24,
+        "category": "documents",
+        "name": "Fake ID"
+    },
+    {
+        "model": "forged_license",
+        "description": "Falsified document for illegal activities.",
+        "stock": 6,
+        "image": "https://www.signs4fun.com/assets/images/sl911.jpg",
+        "price": 1200,
+        "id": 25,
+        "category": "documents",
+        "name": "Forged License"
+    },
+    {
+        "model": "heist_plans",
+        "description": "Detailed schematics for planning robberies.",
+        "stock": 3,
+        "image": "https://i.redd.it/3yawckb8wnhz.jpg",
+        "price": 3000,
+        "id": 26,
+        "category": "documents",
+        "name": "Heist Plans"
+    },
+    {
+        "model": "money_template",
+        "description": "Template for producing fake currency.",
+        "stock": 2,
+        "image": "https://www.rewardcharts4kids.com/wp-content/uploads/2015/04/5-Play-Money-with-Photo.jpeg",
+        "price": 5000,
+        "id": 27,
+        "category": "documents",
+        "name": "Counterfeit Money Template"
+    },
+    {
+        "model": "safe_combination",
+        "description": "Document containing secure vault codes.",
+        "stock": 4,
+        "image": "https://as1.ftcdn.net/v2/jpg/00/69/82/02/1000_F_69820258_oXTJ0AykK1YvoA148YWLx70zfA3IJC6y.jpg",
+        "price": 4000,
+        "id": 28,
+        "category": "documents",
+        "name": "Safe Combination"
+    }
+]
