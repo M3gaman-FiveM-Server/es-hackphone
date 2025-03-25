@@ -9,7 +9,7 @@ end)
 Callback = Config.Framework == "ESX" or Config.Framework == "NewESX" and Framework.TriggerServerCallback or Framework.Functions.TriggerCallback
 
 
-RegisterKeyMapping('eyestore', 'Open Eyes Menu', 'keyboard', 'J')
+RegisterKeyMapping('eyestore', 'Open Eyes Menu', 'keyboard', Config.OpenKey or 'J')
 
 local isPhoneOpen = false
 local phoneProp = nil
@@ -98,13 +98,32 @@ end
 
 RegisterCommand('eyestore', function()
     if not isPhoneOpen then
+        if Config.UseItem then
+            local hasItem = false
+            
+            if Config.Framework == "QBCore" then
+                Framework.Functions.TriggerCallback('hackphone:checkItem', function(result)
+                    hasItem = result
+                end, Config.ItemName)
+            elseif Config.Framework == "ESX" or Config.Framework == "NewESX" then
+                Framework.TriggerServerCallback('hackphone:checkItem', function(result)
+                    hasItem = result
+                end, Config.ItemName)
+            end
+            
+            Citizen.Wait(500)
+            
+            if not hasItem then
+                TriggerEvent("chatMessage", "TELEFON", {255, 0, 0}, "Bu özelliği kullanmak için " .. Config.ItemName .. " itemine ihtiyacınız var!")
+                return
+            end
+        end
+
         isPhoneOpen = true
-        
         createPhone()
         phoneAnim()
 
         Callback('BlackMarket', function(items)
-
             Config['Black Market Items'] = items.items
 
             SendNUIMessage({
@@ -115,19 +134,10 @@ RegisterCommand('eyestore', function()
             
             SetNuiFocus(true, true)
             SetNuiFocusKeepInput(true)
-
         end)
 
-        
         Citizen.CreateThread(function()
             while isPhoneOpen do
-                DisableControlAction(0, 199, true)
-                DisableControlAction(0, 200, true)
-                DisableControlAction(0, 202, true)
-                DisableControlAction(0, 177, true)
-                DisableControlAction(0, 322, true)
-                DisableControlAction(0, 244, true)
-                
                 DisableControlAction(0, 24, true)
                 DisableControlAction(0, 25, true)
                 DisableControlAction(0, 140, true)
@@ -136,18 +146,6 @@ RegisterCommand('eyestore', function()
                 DisableControlAction(0, 257, true)
                 DisableControlAction(0, 263, true)
                 DisableControlAction(0, 264, true)
-                
-                EnableControlAction(0, 30, true)
-                EnableControlAction(0, 31, true)
-                EnableControlAction(0, 32, true)
-                EnableControlAction(0, 33, true)
-                EnableControlAction(0, 34, true)
-                EnableControlAction(0, 35, true)
-                EnableControlAction(0, 44, true)
-                EnableControlAction(0, 20, true)
-                EnableControlAction(0, 21, true)
-                EnableControlAction(0, 22, true)
-                EnableControlAction(0, 23, true)
                 
                 if IsControlJustPressed(0, 200) or IsControlJustPressed(0, 322) or IsControlJustPressed(0, 177) then
                     TriggerEvent("eyestore:closePhone")
@@ -280,21 +278,11 @@ function GetVehicleByPlate(plate)
         print("No plate specified!")
         return nil
     end
-    
     local cleanPlate = string.gsub(plate, "%s+", "")
-    
     local vehicles = GetGamePool('CVehicle')
-    
-    print("Searching for plate: " .. cleanPlate)
-    print("Number of vehicles found: " .. #vehicles)
-    
     for _, vehicle in ipairs(vehicles) do
         local vehiclePlate = GetVehicleNumberPlateText(vehicle)
-        
         vehiclePlate = string.gsub(vehiclePlate, "%s+", "")
-        
-        print("Checking vehicle plate: " .. vehiclePlate)
-        
         if string.lower(vehiclePlate) == string.lower(cleanPlate) then
             print("Vehicle found: " .. vehicle)
             return vehicle
@@ -312,7 +300,6 @@ function GetVehicleByPlate(plate)
             end
         end
     end
-    
     print("Vehicle not found: " .. cleanPlate)
     return nil
 end
@@ -1424,41 +1411,41 @@ function CreateMoneyPropV3(coords)
     return prop
 end
 
-RegisterCommand('testallprops', function(source, args)
-    local playerPed = PlayerPedId()
-    local playerCoords = GetEntityCoords(playerPed)
+-- RegisterCommand('testallprops', function(source, args)
+--     local playerPed = PlayerPedId()
+--     local playerCoords = GetEntityCoords(playerPed)
     
-    local prop1 = CreateMoneyProp(playerCoords)
-    if DoesEntityExist(prop1) then
-        print("Method 1 successful: " .. prop1)
-    else
-        print("Method 1 failed!")
-    end
+--     local prop1 = CreateMoneyProp(playerCoords)
+--     if DoesEntityExist(prop1) then
+--         print("Method 1 successful: " .. prop1)
+--     else
+--         print("Method 1 failed!")
+--     end
     
-    Citizen.Wait(500)
+--     Citizen.Wait(500)
     
-    local prop2 = CreateMoneyPropAlternative(playerCoords)
-    if DoesEntityExist(prop2) then
-        print("Method 2 successful: " .. prop2)
-    else
-        print("Method 2 failed!")
-    end
+--     local prop2 = CreateMoneyPropAlternative(playerCoords)
+--     if DoesEntityExist(prop2) then
+--         print("Method 2 successful: " .. prop2)
+--     else
+--         print("Method 2 failed!")
+--     end
     
-    Citizen.Wait(500)
+--     Citizen.Wait(500)
     
-    local prop3 = CreateMoneyPropV3(playerCoords)
-    if DoesEntityExist(prop3) then
-        print("Method 3 successful: " .. prop3)
-    else
-        print("Method 3 failed!")
-    end
+--     local prop3 = CreateMoneyPropV3(playerCoords)
+--     if DoesEntityExist(prop3) then
+--         print("Method 3 successful: " .. prop3)
+--     else
+--         print("Method 3 failed!")
+--     end
     
-    Citizen.SetTimeout(30000, function()
-        if DoesEntityExist(prop1) then DeleteObject(prop1) end
-        if DoesEntityExist(prop2) then DeleteObject(prop2) end
-        if DoesEntityExist(prop3) then DeleteObject(prop3) end
-    end)
-end, false)
+--     Citizen.SetTimeout(30000, function()
+--         if DoesEntityExist(prop1) then DeleteObject(prop1) end
+--         if DoesEntityExist(prop2) then DeleteObject(prop2) end
+--         if DoesEntityExist(prop3) then DeleteObject(prop3) end
+--     end)
+-- end, false)
 
 function CreateMoneyPropAroundPlayer(count)
     local playerPed = PlayerPedId()
@@ -1538,23 +1525,23 @@ function CreateMoneyPropAroundPlayer(count)
     return props
 end
 
-RegisterCommand('testmoneyaround', function(source, args)
-    local count = tonumber(args[1]) or 10
+-- RegisterCommand('testmoneyaround', function(source, args)
+--     local count = tonumber(args[1]) or 10
     
-    PlaySoundFrontend(-1, "ROBBERY_MONEY_TOTAL", "HUD_FRONTEND_CUSTOM_SOUNDSET", true)
+--     PlaySoundFrontend(-1, "ROBBERY_MONEY_TOTAL", "HUD_FRONTEND_CUSTOM_SOUNDSET", true)
     
-    local props = CreateMoneyPropAroundPlayer(count)
+--     local props = CreateMoneyPropAroundPlayer(count)
     
-    print("Number of props created: " .. #props)
+--     print("Number of props created: " .. #props)
     
-    Citizen.SetTimeout(30000, function()
-        for _, prop in ipairs(props) do
-            if DoesEntityExist(prop) then
-                DeleteObject(prop)
-            end
-        end
-    end)
-end, false)
+--     Citizen.SetTimeout(30000, function()
+--         for _, prop in ipairs(props) do
+--             if DoesEntityExist(prop) then
+--                 DeleteObject(prop)
+--             end
+--         end
+--     end)
+-- end, false)
 
 RegisterNUICallback('createMoneyPropsAroundPlayer', function(data, cb)
     local count = data.count or 10
@@ -1647,93 +1634,93 @@ function SetVehicleLightsState(vehicle, state)
     return false
 end
 
-RegisterCommand('testengine', function(source, args)
-    local playerPed = PlayerPedId()
-    local vehicle = GetVehiclePedIsIn(playerPed, false)
+-- RegisterCommand('testengine', function(source, args)
+--     local playerPed = PlayerPedId()
+--     local vehicle = GetVehiclePedIsIn(playerPed, false)
     
-    if DoesEntityExist(vehicle) then
-        local state = not GetIsVehicleEngineRunning(vehicle)
-        SetVehicleEngineState(vehicle, state)
-        print("Engine state changed: " .. tostring(state))
-    else
-        print("You are not in a vehicle!")
-    end
-end, false)
+--     if DoesEntityExist(vehicle) then
+--         local state = not GetIsVehicleEngineRunning(vehicle)
+--         SetVehicleEngineState(vehicle, state)
+--         print("Engine state changed: " .. tostring(state))
+--     else
+--         print("You are not in a vehicle!")
+--     end
+-- end, false)
 
-RegisterCommand('testlights', function(source, args)
-    local playerPed = PlayerPedId()
-    local vehicle = GetVehiclePedIsIn(playerPed, false)
+-- RegisterCommand('testlights', function(source, args)
+--     local playerPed = PlayerPedId()
+--     local vehicle = GetVehiclePedIsIn(playerPed, false)
     
-    if DoesEntityExist(vehicle) then
-        local lightsState = GetVehicleLightsState(vehicle)
-        local currentLightsOn = lightsState == 2
-        local newState = not currentLightsOn
+--     if DoesEntityExist(vehicle) then
+--         local lightsState = GetVehicleLightsState(vehicle)
+--         local currentLightsOn = lightsState == 2
+--         local newState = not currentLightsOn
         
-        SetVehicleLightsState(vehicle, newState)
-        print("Lights state changed: " .. tostring(newState))
-    else
-        print("You are not in a vehicle!")
-    end
-end, false)
+--         SetVehicleLightsState(vehicle, newState)
+--         print("Lights state changed: " .. tostring(newState))
+--     else
+--         print("You are not in a vehicle!")
+--     end
+-- end, false)
 
-RegisterCommand('testprogress', function(source, args)
-    local progress = tonumber(args[1]) or 50
+-- RegisterCommand('testprogress', function(source, args)
+--     local progress = tonumber(args[1]) or 50
     
-    SendNUIMessage({
-        data = 'atmTransferUpdate',
-        progress = progress,
-        transferAmount = math.floor((progress / 100) * 50000),
-        remainingLoot = math.floor(50000 * (1 - progress / 100))
-    })
+--     SendNUIMessage({
+--         data = 'atmTransferUpdate',
+--         progress = progress,
+--         transferAmount = math.floor((progress / 100) * 50000),
+--         remainingLoot = math.floor(50000 * (1 - progress / 100))
+--     })
     
-    print("Test progress update sent: " .. progress .. "%")
-end, false)
+--     print("Test progress update sent: " .. progress .. "%")
+-- end, false)
 
-RegisterCommand('fixatmprogress', function(source, args)
-    local playerPed = PlayerPedId()
-    local playerCoords = GetEntityCoords(playerPed)
+-- RegisterCommand('fixatmprogress', function(source, args)
+--     local playerPed = PlayerPedId()
+--     local playerCoords = GetEntityCoords(playerPed)
     
-    local atm = getNearestATM()
-    if not atm then
-        print("No ATM found nearby!")
-        return
-    end
+--     local atm = getNearestATM()
+--     if not atm then
+--         print("No ATM found nearby!")
+--         return
+--     end
     
-    local amount = 50000
-    local progress = 0
-    local updateInterval = 300
-    local totalUpdates = 30000 / updateInterval
-    local progressPerUpdate = 100 / totalUpdates
+--     local amount = 50000
+--     local progress = 0
+--     local updateInterval = 300
+--     local totalUpdates = 30000 / updateInterval
+--     local progressPerUpdate = 100 / totalUpdates
     
-    Citizen.CreateThread(function()
-        while progress < 100 do
-            Citizen.Wait(updateInterval)
+--     Citizen.CreateThread(function()
+--         while progress < 100 do
+--             Citizen.Wait(updateInterval)
             
-            progress = progress + progressPerUpdate
-            if progress > 100 then progress = 100 end
+--             progress = progress + progressPerUpdate
+--             if progress > 100 then progress = 100 end
             
-            print("Test ATM Progress: " .. progress .. "%")
+--             print("Test ATM Progress: " .. progress .. "%")
             
-            SendNUIMessage({
-                data = 'atmTransferUpdate',
-                progress = progress,
-                transferAmount = math.floor((progress / 100) * amount),
-                remainingLoot = math.floor(amount * (1 - progress / 100))
-            })
+--             SendNUIMessage({
+--                 data = 'atmTransferUpdate',
+--                 progress = progress,
+--                 transferAmount = math.floor((progress / 100) * amount),
+--                 remainingLoot = math.floor(amount * (1 - progress / 100))
+--             })
             
-            if progress >= 100 then
-                break
-            end
-        end
-    end)
+--             if progress >= 100 then
+--                 break
+--             end
+--         end
+--     end)
     
-    print("ATM progress test started!")
-end, false)
+--     print("ATM progress test started!")
+-- end, false)
 
-RegisterCommand('resetatmslocal', function(source, args)
-    robbedATMs = {}
-    print("Yerel ATM listesi sıfırlandı")
-end, false)
+-- RegisterCommand('resetatmslocal', function(source, args)
+--     robbedATMs = {}
+--     print("Local ATM list reset")
+-- end, false)
 
 RegisterNUICallback('markATMRobbed', function(data, cb)
     local atmId = data.atmId
@@ -1747,119 +1734,79 @@ RegisterNUICallback('markATMRobbed', function(data, cb)
     end
 end)
 
-RegisterCommand('checkatmslocal', function(source, args)
-    -- Tablo uzunluğunu saymak yerine, tablo içeriğini kontrol et
-    local count = 0
-    for atmId, _ in pairs(robbedATMs) do
-        count = count + 1
-        print("Soyulmuş ATM (yerel): " .. atmId)
-    end
-    
-    print("Toplam soyulmuş ATM sayısı (yerel): " .. count)
-    
-    -- Server'dan güncel listeyi iste
-    TriggerServerEvent('hackphone:requestRobbedATMs')
-end, false)
+-- RegisterCommand('checkatmslocal', function(source, args)
+--     local count = 0
+--     for atmId, _ in pairs(robbedATMs) do
+--         count = count + 1
+--         print("Peeled ATM (local): " .. atmId)
+--     end
+--     print("Total number of robbed ATMs (local): " .. count)
+--     TriggerServerEvent('hackphone:requestRobbedATMs')
+-- end, false)
 
--- Script başladığında ATM listesini sıfırla (client tarafı)
 Citizen.CreateThread(function()
-    Citizen.Wait(2000) -- Server'ın yüklenmesini bekle
-    
-    -- Server'dan güncel (boş) listeyi iste
+    Citizen.Wait(2000) 
     TriggerServerEvent('hackphone:requestRobbedATMs')
-    
-    print("Client başlangıcında ATM listesi istendi")
+    print("ATM list requested at client startup")
 end)
 
-RegisterCommand('testtransfer', function(source, args)
-    local amount = tonumber(args[1]) or 50000
-    local progress = tonumber(args[2]) or 50
+-- RegisterCommand('testtransfer', function(source, args)
+--     local amount = tonumber(args[1]) or 50000
+--     local progress = tonumber(args[2]) or 50
     
-    SendNUIMessage({
-        data = 'atmTransferUpdate',
-        progress = progress,
-        transferAmount = math.floor((progress / 100) * amount),
-        remainingLoot = math.floor(amount * (1 - progress / 100))
-    })
-    
-    print("Test transfer update sent:")
-    print("Progress: " .. progress .. "%")
-    print("Transfer Amount: $" .. math.floor((progress / 100) * amount))
-    print("Remaining Loot: $" .. math.floor(amount * (1 - progress / 100)))
-end, false)
+--     SendNUIMessage({
+--         data = 'atmTransferUpdate',
+--         progress = progress,
+--         transferAmount = math.floor((progress / 100) * amount),
+--         remainingLoot = math.floor(amount * (1 - progress / 100))
+--     })
+--     print("Test transfer update sent:")
+--     print("Progress: " .. progress .. "%")
+--     print("Transfer Amount: $" .. math.floor((progress / 100) * amount))
+--     print("Remaining Loot: $" .. math.floor(amount * (1 - progress / 100)))
+-- end, false)
 
--- Black Market ürün alımı için callback
 RegisterNUICallback('getBlackMarketItems', function(data, cb)
     if not data or not data.items or #data.items == 0 then
         print("Geçersiz Black Market verileri!")
         cb({ success = false, message = 'Geçersiz Black Market verileri!' })
         return
     end
-    
     local totalCost = data.totalCost or 0
-    
-    -- Debug için çıktı
-    print("Black Market satın alım verileri:")
-    print("Toplam Tutar: $" .. totalCost)
-    print("Satın alınan ürünler:")
-    
     for i, item in ipairs(data.items) do
         print(string.format("Ürün #%d: %s (Model: %s) - Miktar: %d - Fiyat: $%d", 
             i, item.name, item.model, item.count, item.price))
     end
-    
-    -- Sunucu tarafına stok düşme ve ürünleri verme işlemi için istek gönder
     TriggerServerEvent('blackmarket:purchaseItems', data.items, totalCost)
-    
-    -- Başarılı cevap
     cb({ success = true, message = 'Satın alma işlemi tamamlandı!' })
 end)
 
--- Stok bilgilerini sunucudan al
 RegisterNetEvent('blackmarket:syncStockData')
 AddEventHandler('blackmarket:syncStockData', function(stockData)
-    -- UI'a stok güncelleme bilgisini gönder
     SendNUIMessage({
         data = 'updateBlackMarketStock',
         stockData = stockData
     })
 end)
 
--- Black Market ürün satın alma bildirimini işle
 RegisterNUICallback('purchaseBlackMarketItems', function(data, cb)
     if not data or not data.items or #data.items == 0 then
         print("Geçersiz Black Market verileri!")
         cb({ success = false, message = 'Geçersiz Black Market verileri!' })
         return
     end
-    
     local totalCost = data.totalCost or 0
-    
-    -- Debug için ayrıntılı çıktı
-    print("^3BLACK MARKET - Satın Alma İşlemi^7")
-    print("^2Toplam Tutar: $" .. totalCost .. "^7")
-    print("^3Satın alınan ürünler:^7")
-    
     for i, item in ipairs(data.items) do
         print(string.format("^5[%d] %s x%d - $%d - Model: %s^7", 
             i, item.name, item.count, item.price, item.model or "N/A"))
     end
-    
-    -- Server tarafına stok güncellemesi için istek gönder
     Callback('Buy', function(result)
         if result and result.success then
-            -- Bildirim göster
             TriggerEvent("chatMessage", "BLACK MARKET", {0, 255, 0}, "Satın alma işlemi tamamlandı! Toplam: $" .. totalCost)
-            
-            -- Ses efekti
             PlaySoundFrontend(-1, "PURCHASE", "HUD_LIQUOR_STORE_SOUNDSET", true)
-            
-            -- Stok bilgilerini güncelle
             if result.items then
                 Config['Black Market Items'] = result.items
             end
-            
-            -- Başarılı cevap
             cb({ success = true, message = 'Satın alma işlemi tamamlandı!' })
         else
             cb({ success = false, message = result.message or 'Satın alma işlemi başarısız!' })
