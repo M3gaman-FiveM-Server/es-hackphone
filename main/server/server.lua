@@ -12,14 +12,12 @@ end)
 
 Callback('Buy', function(source, cb, items)
     local src = source
-    print("^2[DEBUG] Buy callback çağrıldı - Oyuncu ID: " .. src)
-    
     if not items or #items == 0 then
-        cb({success = false, message = "Ürün verileri alınamadı!"})
+        cb({success = false, message = "Product data could not be retrieved!"})
         return
     end
     
-    print("^3[DEBUG] Gelen ürünler: " .. json.encode(items))
+    print("^3[DEBUG] Incoming products: " .. json.encode(items))
     
     local blackMarketData = json.decode(LoadResourceFile(GetCurrentResourceName(), "blackmarket.json") or "[]")
     
@@ -43,10 +41,10 @@ Callback('Buy', function(source, cb, items)
         cb({
             success = true,
             items = blackMarketData,
-            message = "Satın alma işlemi başarılı!"
+            message = "The purchase is successful!"
         })
         
-        print("[BLACK MARKET] Oyuncu ID: " .. src .. " - $" .. totalPrice .. " değerinde " .. #purchasedItems .. " ürün satın aldı.")
+        print("[BLACK MARKET] Player ID: " .. src .. " - $" .. totalPrice .. " worth " .. #purchasedItems .. " product purchased.")
     else
         cb({
             success = false,
@@ -72,7 +70,7 @@ function ProcessItems(src, items, blackMarketData)
                 
                 if marketItem.stock < count then
                     success = false
-                    errorMessage = marketItem.name .. " için yeterli stok bulunmuyor!"
+                    errorMessage = marketItem.name .. " there is not enough stock!"
                     break
                 end
                 
@@ -95,7 +93,7 @@ function ProcessItems(src, items, blackMarketData)
         
         if not found then
             success = false
-            errorMessage = "Ürün bulunamadı!"
+            errorMessage = "Product not found!"
             break
         end
         
@@ -115,7 +113,7 @@ function ProcessItems(src, items, blackMarketData)
                 
                 if not hasEnoughMoney then
                     success = false
-                    errorMessage = "Yeterli paranız yok! Gereken: $" .. totalPrice
+                    errorMessage = "You don't have enough money! Required: $" .. totalPrice
                 end
             else
                 success = false
@@ -129,15 +127,15 @@ function ProcessItems(src, items, blackMarketData)
                 
                 if not hasEnoughMoney then
                     success = false
-                    errorMessage = "Yeterli paranız yok! Gereken: $" .. totalPrice
+                    errorMessage = "You don't have enough money! Required: $" .. totalPrice
                 end
             else
                 success = false
-                errorMessage = "Oyuncu bulunamadı!"
+                errorMessage = "No player found!"
             end
         else
             success = false
-            errorMessage = "Desteklenmeyen framework ayarı!"
+            errorMessage = "Unsupported framework setting!"
         end
     end
     
@@ -168,7 +166,7 @@ end)
 
 RegisterServerEvent('hackphone:logRobbery')
 AddEventHandler('hackphone:logRobbery', function(playerId, amount)
-    print('[HackPhone] Oyuncu ID: ' .. playerId .. ' - ATM\'den $' .. amount .. ' çaldı.')
+    print('[HackPhone] Player ID: ' .. playerId .. ' - ATM\'from $' .. amount .. ' stole it.')
 end)
 
 RegisterServerEvent('hackphone:syncExplosion')
@@ -389,11 +387,11 @@ AddEventHandler('blackmarket:giveItem', function(itemName, count)
                 
                 if success then
                     print("^2[DEBUG] QBCore Item delivered: " .. itemName .. " x" .. count)
-                    TriggerClientEvent("chatMessage", src, "BLACK MARKET", {0, 255, 0}, "Item eklendi: " .. qbItem.label .. " x" .. count)
+                    -- TriggerClientEvent("chatMessage", src, "BLACK MARKET", {0, 255, 0}, "Item eklendi: " .. qbItem.label .. " x" .. count)
                 else
                     print("^1[ERROR] Failed to add item: " .. itemName .. " - Error: " .. tostring(errorMsg))
-                    TriggerClientEvent("chatMessage", src, "BLACK MARKET", {255, 0, 0}, "Item eklenemedi!")
-                end
+                --     TriggerClientEvent("chatMessage", src, "BLACK MARKET", {255, 0, 0}, "Item eklenemedi!")
+                -- end
             else
                 print("^1[ERROR] QBCore item not found: " .. itemName .. " - Mevcut silahlar:")
                 
@@ -468,7 +466,7 @@ AddEventHandler('blackmarket:directBuy', function(items)
         for _, item in ipairs(purchasedItems) do
             local oldStock = blackMarketData[item.index].stock
             blackMarketData[item.index].stock = oldStock - item.count
-            print("^2[DEBUG] Stok güncellendi: " .. item.name .. " - Eski: " .. oldStock .. ", Yeni: " .. blackMarketData[item.index].stock)
+            -- print("^2[DEBUG] Stok güncellendi: " .. item.name .. " - Eski: " .. oldStock .. ", Yeni: " .. blackMarketData[item.index].stock)
         end
         
         SaveResourceFile(GetCurrentResourceName(), "blackmarket.json", json.encode(blackMarketData, {indent = true}), -1)
@@ -486,4 +484,25 @@ AddEventHandler('blackmarket:directBuy', function(items)
             message = errorMessage
         })
     end
+end)
+
+Callback('hackphone:checkItem', function(source, cb, itemName)
+    local src = source
+    local hasItem = false
+    
+    if Config.Framework == "QBCore" or Config.Framework == "OLDQBCore" then
+        local Player = Framework.Functions.GetPlayer(src)
+        if Player then
+            local item = Player.Functions.GetItemByName(itemName)
+            hasItem = item and item.amount > 0
+        end
+    elseif Config.Framework == "ESX" or Config.Framework == "NewESX" then
+        local xPlayer = Framework.GetPlayerFromId(src)
+        if xPlayer then
+            local item = xPlayer.getInventoryItem(itemName)
+            hasItem = item and item.count > 0
+        end
+    end
+    
+    cb(hasItem)
 end)
