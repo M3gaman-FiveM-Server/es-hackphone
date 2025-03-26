@@ -390,8 +390,8 @@ AddEventHandler('blackmarket:giveItem', function(itemName, count)
                     -- TriggerClientEvent("chatMessage", src, "BLACK MARKET", {0, 255, 0}, "Item eklendi: " .. qbItem.label .. " x" .. count)
                 else
                     print("^1[ERROR] Failed to add item: " .. itemName .. " - Error: " .. tostring(errorMsg))
-                --     TriggerClientEvent("chatMessage", src, "BLACK MARKET", {255, 0, 0}, "Item eklenemedi!")
-                -- end
+                    -- TriggerClientEvent("chatMessage", src, "BLACK MARKET", {255, 0, 0}, "Item eklenemedi!")
+                end
             else
                 print("^1[ERROR] QBCore item not found: " .. itemName .. " - Mevcut silahlar:")
                 
