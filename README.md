@@ -28,7 +28,7 @@ The **FiveM Hacker Phone Black Market Trading System** is a comprehensive underg
 2. Extract the folder to your server's `resources` directory.
 3. Add the following line to your `server.cfg`:
    ```
-   ensure FiveM-Hacker-Phone---Black-Market-Trading-System
+   ensure es-hackphone ---Black-Market-Trading-System
    ```
 4. Configure the `blackmarket.json` file to customize your product offerings.
 5. Restart your server.
@@ -56,7 +56,7 @@ The main configuration file is `blackmarket.json`; use it to:
 
 ## 🎮 Usage
 Players can access the black market through:
-- **Command**: `/hackphone`
+- **Command**: `You need to press the "J" key or you need an item called a hackphone.`
 - **Item Usage**: Use the "hackphone" item from the inventory.
 - **Designated Locations**: Visit marked locations on the map.
 
