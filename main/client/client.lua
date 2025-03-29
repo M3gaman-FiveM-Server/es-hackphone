@@ -138,17 +138,114 @@ RegisterCommand('eyestore', function()
 
         Citizen.CreateThread(function()
             while isPhoneOpen do
-                DisableControlAction(0, 24, true)
-                DisableControlAction(0, 25, true)
-                DisableControlAction(0, 140, true)
-                DisableControlAction(0, 141, true)
-                DisableControlAction(0, 142, true)
-                DisableControlAction(0, 257, true)
-                DisableControlAction(0, 263, true)
-                DisableControlAction(0, 264, true)
+                -- Her frame başında tüm kontrolleri devre dışı bırak
+                DisableAllControlActions(0)       -- Grup 0 (ana kontroller)
+                DisableAllControlActions(1)       -- Grup 1
+                DisableAllControlActions(2)       -- Grup 2
                 
-                if IsControlJustPressed(0, 200) or IsControlJustPressed(0, 322) or IsControlJustPressed(0, 177) then
-                    TriggerEvent("eyestore:closePhone")
+                -- HAREKET KONTROLÜ - Bu kontroller kesinlikle aktif kalacak
+                -- W, A, S, D tuşları (yürüme)
+                EnableControlAction(0, 32, true)  -- W tuşu
+                EnableControlAction(0, 34, true)  -- A tuşu
+                EnableControlAction(0, 33, true)  -- S tuşu
+                EnableControlAction(0, 35, true)  -- D tuşu
+                
+                -- Koşma, zıplama, eğilme
+                EnableControlAction(0, 21, true)  -- SHIFT tuşu (koşma)
+                EnableControlAction(0, 22, true)  -- SPACE tuşu (zıplama)
+                
+                -- Kamera kontrolleri
+                EnableControlAction(0, 1, true)   -- Kamera sağ/sol bakma
+                EnableControlAction(0, 2, true)   -- Kamera yukarı/aşağı bakma
+                EnableControlAction(0, 3, true)   -- Zoom
+                EnableControlAction(0, 4, true)   -- Kamera ek kontrol
+                EnableControlAction(0, 5, true)   -- Kamera ek kontrol
+                EnableControlAction(0, 6, true)   -- Kamera ek kontrol
+                
+                -- Karakter dönme kontrolleri
+                EnableControlAction(0, 30, true)  -- Karakter sağa sola hareketi için
+                EnableControlAction(0, 31, true)  -- Karakter ileri geri hareketi için
+                
+                -- Alternatif hareket kontrolleri
+                EnableControlAction(0, 71, true)  -- W - araç içi
+                EnableControlAction(0, 72, true)  -- S - araç içi
+                EnableControlAction(0, 63, true)  -- A - araç içi
+                EnableControlAction(0, 64, true)  -- D - araç içi
+
+                -- Bazı ek hareket tuşları
+                EnableControlAction(0, 23, true)  -- Araç/kapı giriş tuşu (Enter vehicle)
+                EnableControlAction(0, 75, true)  -- Araçtan çıkış (Exit vehicle)
+                EnableControlAction(0, 23, true)  -- Enter/F
+                
+                -- FiveM kontrolü
+                SetNuiFocus(true, true)           -- Telefon NUI'sine odaklan
+                SetNuiFocusKeepInput(true)        -- Input tutmayı sürdür
+                
+                -- Tüm F tuşlarını devre dışı bırak
+                local f_keys = {
+                    288, -- F1
+                    289, -- F2
+                    170, -- F3
+                    166, -- F5
+                    167, -- F6
+                    168, -- F7
+                    169, -- F8
+                    56,  -- F9
+                    57,  -- F10
+                    344  -- F11
+                }
+                
+                -- CTRL tuşunu tamamen devre dışı bırak (diz çökmeyi engelle)
+                DisableControlAction(0, 36, true)  -- CTRL (grup 0)
+                DisableControlAction(1, 36, true)  -- CTRL (grup 1)
+                DisableControlAction(2, 36, true)  -- CTRL (grup 2)
+                SetInputExclusive(0, 36)           -- CTRL tuşunu sistemden ayır
+                ResetPedRagdollBlockingFlags(PlayerPedId(), 2)
+                
+                -- F tuşlarını devre dışı bırak
+                for _, key in ipairs(f_keys) do
+                    DisableControlAction(0, key, true)
+                    DisableControlAction(1, key, true)
+                    DisableControlAction(2, key, true)
+                    SetInputExclusive(0, key)
+                    
+                    -- F tuşları için ilave kontrol
+                    if IsDisabledControlJustPressed(0, key) then
+                        SetPauseMenuActive(false)
+                    end
+                end
+                
+                -- UI tuşlarını devre dışı bırak
+                local ui_keys = {
+                    199, -- P tuşu (pause menu)
+                    200, -- ESC tuşu
+                    202, -- ESC/Back
+                    322, -- ESC key
+                    244  -- M tuşu (harita)
+                }
+                
+                for _, key in ipairs(ui_keys) do
+                    DisableControlAction(0, key, true)
+                    DisableControlAction(1, key, true)
+                    DisableControlAction(2, key, true)
+                    SetInputExclusive(0, key)
+                    
+                    -- ESC veya pause menu kontrolleri için ilave işlem
+                    if IsDisabledControlJustPressed(0, key) then
+                        if key == 200 or key == 202 or key == 322 then
+                            TriggerEvent("eyestore:closePhone")
+                        end
+                        SetPauseMenuActive(false)
+                    end
+                end
+                
+                -- Diğer oyun kontrollerini engelle
+                BlockWeaponWheelThisFrame()            -- Silah tekerleğini engelle
+                HudWeaponWheelIgnoreSelection()        -- Silah tekerleği seçimlerini yoksay
+                DisablePlayerFiring(PlayerId(), true)  -- Ateş etmeyi engelle
+
+                if IsPauseMenuActive() then
+                    SetPauseMenuActive(false)
                 end
                 
                 Citizen.Wait(0)
@@ -161,41 +258,37 @@ RegisterNUICallback('Close', function()
     if isPhoneOpen then
         SetNuiFocus(false, false)
         SetNuiFocusKeepInput(false)
-        
         removePhoneAnim()
         Wait(500)
         deletePhone()
-        
         SendNUIMessage({
             data = 'PHONE',
             open = false,
         })
-        
         BeginScaleformMovieMethodOnFrontend("DISPLAY_MENU")
         ScaleformMovieMethodAddParamBool(false)
         EndScaleformMovieMethod()
-        
-        SetNuiFocusKeepInput(false)
         isPhoneOpen = false
-        
+        EnableAllControlActions(0)
+        EnableAllControlActions(1)
+        EnableAllControlActions(2)
         Citizen.CreateThread(function()
-            local disablePauseTime = GetGameTimer() + 1000
+            local cooldownTime = GetGameTimer() + 500
             
-            while GetGameTimer() < disablePauseTime do
-                DisableControlAction(0, 199, true)
-                DisableControlAction(0, 200, true)
-                DisableControlAction(0, 202, true)
-                DisableControlAction(0, 177, true)
-                DisableControlAction(0, 322, true)
-                DisableControlAction(0, 244, true)
-                
-                if IsControlJustPressed(0, 199) or IsControlJustPressed(0, 200) or IsControlJustPressed(0, 322) then
-                    PauseCancelScriptedConversation()
+            while GetGameTimer() < cooldownTime do
+                DisableControlAction(0, 200, true) -- ESC menu
+                DisableControlAction(0, 202, true) -- ESC/Back
+                DisableControlAction(0, 322, true) -- ESC key
+                DisableControlAction(0, 199, true) -- Pause menu (P)
+                if IsPauseMenuActive() then
                     SetPauseMenuActive(false)
                 end
                 
                 Citizen.Wait(0)
             end
+            EnableAllControlActions(0)
+            EnableAllControlActions(1)
+            EnableAllControlActions(2)
         end)
     end
 end)
@@ -938,7 +1031,6 @@ RegisterNUICallback('robATM', function(data, cb)
         return
     end
     
-    -- ATM ID'sini string olarak kontrol et
     local atmIdStr = tostring(atm.id)
     if robbedATMs[atmIdStr] then
         cb({ success = false, message = 'This ATM has already been robbed!' })
@@ -950,10 +1042,8 @@ RegisterNUICallback('robATM', function(data, cb)
     local progress = 0
     local markerId = atmIdStr
     
-    -- ATM'yi soyulmuş olarak işaretle (yerel)
     robbedATMs[atmIdStr] = true
     
-    -- Server'a bildir
     TriggerServerEvent('hackphone:markATMRobbed', atmIdStr)
     
     activeRobberyMarkers[markerId] = {
@@ -975,7 +1065,6 @@ RegisterNUICallback('robATM', function(data, cb)
     }
     local completedStages = {}
 
-    -- İlk ilerleme değerini gönder
     SendNUIMessage({
         data = 'atmTransferUpdate',
         progress = 0,
@@ -983,13 +1072,12 @@ RegisterNUICallback('robATM', function(data, cb)
         remainingLoot = amount
     })
     
-    -- Terminal mesajı ekle
     SendNUIMessage({
         data = 'addTerminalOutput',
         text = "ATM Robbery Progress: 0%",
         type = 'info'
     })
-    
+
     SendNUIMessage({
         data = 'addTerminalOutput',
         text = "Transferred: $0 - Remaining: $" .. amount,
@@ -1009,7 +1097,6 @@ RegisterNUICallback('robATM', function(data, cb)
             
             print("ATM Robbery Progress: " .. progress .. "%")
             
-            -- İlerleme değerini UI'a gönder (her güncelleme için)
             local transferAmount = math.floor((progress / 100) * amount)
             local remainingLoot = amount - transferAmount
             
@@ -1020,12 +1107,10 @@ RegisterNUICallback('robATM', function(data, cb)
                 remainingLoot = remainingLoot
             })
             
-            -- Server'a ilerleme bilgisini gönder
             if math.floor(progress) % 10 == 0 then
                 TriggerServerEvent('hackphone:syncATMRobbery', markerId, progress, true)
             end
             
-            -- Prop aşamalarını kontrol et
             for _, stage in ipairs(propStages) do
                 if progress >= stage.level and not completedStages[stage.level] then
                     completedStages[stage.level] = true
@@ -1045,9 +1130,7 @@ RegisterNUICallback('robATM', function(data, cb)
             end
         end
 
-        -- Soygun tamamlandığında
         if progress >= 100 then
-            -- Son ilerleme değerini gönder
             SendNUIMessage({
                 data = 'atmTransferUpdate',
                 progress = 100,
@@ -1055,17 +1138,14 @@ RegisterNUICallback('robATM', function(data, cb)
                 remainingLoot = 0
             })
             
-            -- Soygun tamamlandı bilgisini gönder
             SendNUIMessage({
                 data = 'atmRobComplete',
                 amount = amount,
                 atmId = atm.id
             })
             
-            -- Server'a soygun tamamlandı bilgisini gönder
             TriggerServerEvent('hackphone:syncATMRobbery', markerId, 100, false)
             
-            -- Para miktarını server'a gönder
             print("Sending money directly to the server: " .. amount)
             TriggerServerEvent('hackphone:giveATMMoney', {
                 amount = amount,
@@ -1074,7 +1154,6 @@ RegisterNUICallback('robATM', function(data, cb)
         end
     end)
 
-    -- Başarılı başlangıç bildirimi
     cb({ 
         success = true, 
         message = 'ATM hack initiated...',
@@ -1092,12 +1171,10 @@ AddEventHandler('hackphone:syncRobbedATMs', function(robbedList)
     
     robbedATMs = robbedList
     
-    -- Debug mesajı
     local count = 0
     for _ in pairs(robbedATMs) do count = count + 1 end
     print("Soyulan ATM listesi güncellendi: " .. count .. " adet ATM")
     
-    -- UI'a bildir
     SendNUIMessage({
         data = 'syncRobbedATMs',
         robbedATMs = robbedATMs
@@ -1411,42 +1488,6 @@ function CreateMoneyPropV3(coords)
     return prop
 end
 
--- RegisterCommand('testallprops', function(source, args)
---     local playerPed = PlayerPedId()
---     local playerCoords = GetEntityCoords(playerPed)
-    
---     local prop1 = CreateMoneyProp(playerCoords)
---     if DoesEntityExist(prop1) then
---         print("Method 1 successful: " .. prop1)
---     else
---         print("Method 1 failed!")
---     end
-    
---     Citizen.Wait(500)
-    
---     local prop2 = CreateMoneyPropAlternative(playerCoords)
---     if DoesEntityExist(prop2) then
---         print("Method 2 successful: " .. prop2)
---     else
---         print("Method 2 failed!")
---     end
-    
---     Citizen.Wait(500)
-    
---     local prop3 = CreateMoneyPropV3(playerCoords)
---     if DoesEntityExist(prop3) then
---         print("Method 3 successful: " .. prop3)
---     else
---         print("Method 3 failed!")
---     end
-    
---     Citizen.SetTimeout(30000, function()
---         if DoesEntityExist(prop1) then DeleteObject(prop1) end
---         if DoesEntityExist(prop2) then DeleteObject(prop2) end
---         if DoesEntityExist(prop3) then DeleteObject(prop3) end
---     end)
--- end, false)
-
 function CreateMoneyPropAroundPlayer(count)
     local playerPed = PlayerPedId()
     local playerCoords = GetEntityCoords(playerPed)
@@ -1524,24 +1565,6 @@ function CreateMoneyPropAroundPlayer(count)
     
     return props
 end
-
--- RegisterCommand('testmoneyaround', function(source, args)
---     local count = tonumber(args[1]) or 10
-    
---     PlaySoundFrontend(-1, "ROBBERY_MONEY_TOTAL", "HUD_FRONTEND_CUSTOM_SOUNDSET", true)
-    
---     local props = CreateMoneyPropAroundPlayer(count)
-    
---     print("Number of props created: " .. #props)
-    
---     Citizen.SetTimeout(30000, function()
---         for _, prop in ipairs(props) do
---             if DoesEntityExist(prop) then
---                 DeleteObject(prop)
---             end
---         end
---     end)
--- end, false)
 
 RegisterNUICallback('createMoneyPropsAroundPlayer', function(data, cb)
     local count = data.count or 10
@@ -1634,94 +1657,6 @@ function SetVehicleLightsState(vehicle, state)
     return false
 end
 
--- RegisterCommand('testengine', function(source, args)
---     local playerPed = PlayerPedId()
---     local vehicle = GetVehiclePedIsIn(playerPed, false)
-    
---     if DoesEntityExist(vehicle) then
---         local state = not GetIsVehicleEngineRunning(vehicle)
---         SetVehicleEngineState(vehicle, state)
---         print("Engine state changed: " .. tostring(state))
---     else
---         print("You are not in a vehicle!")
---     end
--- end, false)
-
--- RegisterCommand('testlights', function(source, args)
---     local playerPed = PlayerPedId()
---     local vehicle = GetVehiclePedIsIn(playerPed, false)
-    
---     if DoesEntityExist(vehicle) then
---         local lightsState = GetVehicleLightsState(vehicle)
---         local currentLightsOn = lightsState == 2
---         local newState = not currentLightsOn
-        
---         SetVehicleLightsState(vehicle, newState)
---         print("Lights state changed: " .. tostring(newState))
---     else
---         print("You are not in a vehicle!")
---     end
--- end, false)
-
--- RegisterCommand('testprogress', function(source, args)
---     local progress = tonumber(args[1]) or 50
-    
---     SendNUIMessage({
---         data = 'atmTransferUpdate',
---         progress = progress,
---         transferAmount = math.floor((progress / 100) * 50000),
---         remainingLoot = math.floor(50000 * (1 - progress / 100))
---     })
-    
---     print("Test progress update sent: " .. progress .. "%")
--- end, false)
-
--- RegisterCommand('fixatmprogress', function(source, args)
---     local playerPed = PlayerPedId()
---     local playerCoords = GetEntityCoords(playerPed)
-    
---     local atm = getNearestATM()
---     if not atm then
---         print("No ATM found nearby!")
---         return
---     end
-    
---     local amount = 50000
---     local progress = 0
---     local updateInterval = 300
---     local totalUpdates = 30000 / updateInterval
---     local progressPerUpdate = 100 / totalUpdates
-    
---     Citizen.CreateThread(function()
---         while progress < 100 do
---             Citizen.Wait(updateInterval)
-            
---             progress = progress + progressPerUpdate
---             if progress > 100 then progress = 100 end
-            
---             print("Test ATM Progress: " .. progress .. "%")
-            
---             SendNUIMessage({
---                 data = 'atmTransferUpdate',
---                 progress = progress,
---                 transferAmount = math.floor((progress / 100) * amount),
---                 remainingLoot = math.floor(amount * (1 - progress / 100))
---             })
-            
---             if progress >= 100 then
---                 break
---             end
---         end
---     end)
-    
---     print("ATM progress test started!")
--- end, false)
-
--- RegisterCommand('resetatmslocal', function(source, args)
---     robbedATMs = {}
---     print("Local ATM list reset")
--- end, false)
-
 RegisterNUICallback('markATMRobbed', function(data, cb)
     local atmId = data.atmId
     
@@ -1734,37 +1669,11 @@ RegisterNUICallback('markATMRobbed', function(data, cb)
     end
 end)
 
--- RegisterCommand('checkatmslocal', function(source, args)
---     local count = 0
---     for atmId, _ in pairs(robbedATMs) do
---         count = count + 1
---         print("Peeled ATM (local): " .. atmId)
---     end
---     print("Total number of robbed ATMs (local): " .. count)
---     TriggerServerEvent('hackphone:requestRobbedATMs')
--- end, false)
-
 Citizen.CreateThread(function()
     Citizen.Wait(2000) 
     TriggerServerEvent('hackphone:requestRobbedATMs')
     print("ATM list requested at client startup")
 end)
-
--- RegisterCommand('testtransfer', function(source, args)
---     local amount = tonumber(args[1]) or 50000
---     local progress = tonumber(args[2]) or 50
-    
---     SendNUIMessage({
---         data = 'atmTransferUpdate',
---         progress = progress,
---         transferAmount = math.floor((progress / 100) * amount),
---         remainingLoot = math.floor(amount * (1 - progress / 100))
---     })
---     print("Test transfer update sent:")
---     print("Progress: " .. progress .. "%")
---     print("Transfer Amount: $" .. math.floor((progress / 100) * amount))
---     print("Remaining Loot: $" .. math.floor(amount * (1 - progress / 100)))
--- end, false)
 
 RegisterNUICallback('getBlackMarketItems', function(data, cb)
     if not data or not data.items or #data.items == 0 then
