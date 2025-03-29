@@ -256,10 +256,10 @@ end)
 
 RegisterNUICallback('Close', function()
     if isPhoneOpen then
+        Wait(500)
         SetNuiFocus(false, false)
         SetNuiFocusKeepInput(false)
         removePhoneAnim()
-        Wait(500)
         deletePhone()
         SendNUIMessage({
             data = 'PHONE',
@@ -288,7 +288,7 @@ RegisterNUICallback('Close', function()
             end
             EnableAllControlActions(0)
             EnableAllControlActions(1)
-            EnableAllControlActions(2)
+            EnableAllControlActions(2)   
         end)
     end
 end)
