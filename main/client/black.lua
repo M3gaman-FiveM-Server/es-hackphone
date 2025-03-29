@@ -14,9 +14,10 @@ local weaponDelivered = false
 local deliveryInProgress = false
 local pendingDelivery = false
 
+
 RegisterNUICallback('purchaseBlackMarketItems', function(data, cb)
-    print("^2[DEBUG] purchaseBlackMarketItems NUI callback called")
-    print("^3[DEBUG] Received data: " .. json.encode(data))
+    -- print("^2[DEBUG] purchaseBlackMarketItems NUI callback called")
+    -- print("^3[DEBUG] Received data: " .. json.encode(data))
     
     if deliveryInProgress or pendingDelivery then
         print("^1[ERROR] Purchase rejected - delivery already in progress")
@@ -829,3 +830,4 @@ end)
 Citizen.CreateThread(function()
     CleanupDelivery()
 end)
+
