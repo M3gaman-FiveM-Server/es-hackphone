@@ -1,5 +1,3 @@
-// ... existing code ...
-
 document.addEventListener('DOMContentLoaded', function () {
     app = new Vue({
         el: '#app',
@@ -101,22 +99,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 { name: 'Canada VPN', location: 'Canada', icon: 'ri-flag-2-fill', color: '#FF0000' },
                 { name: 'Australia VPN', location: 'Australia', icon: 'ri-flag-2-fill', color: '#00008B' }
             ],
-
-            // Black Market data
             wallet: 5000,
             cart: [],
             showCart: false,
             marketProducts: [],
             selectedCategory: 'all',
             filteredProducts: [],
-
-            // New category system
             categories: [],
-
             // Apps list
             apps: [
-                { id: 'terminal', name: 'Terminal', icon: 'ri-terminal-box-fill', color: '#00FF00', description: 'Advanced terminal interface' },
-                { id: 'vpn', name: 'VPN', icon: 'ri-shield-keyhole-fill', color: '#1E90FF', description: 'Secure connection' },
+                { id: 'terminal', name: 'Terminal', icon: 'ri-terminal-box-fill', color: '#4CAF50', action: 'openTerminal' },
+                { id: 'vpn', name: 'SecureVPN', icon: 'ri-shield-check-fill', color: '#2196F3', action: 'openVPN' },
                 { id: 'market', name: 'Black Market', icon: 'ri-shopping-bag-fill', color: '#FF4757', description: 'Special products' },
                 { id: 'settings', name: 'Settings', icon: 'ri-settings-fill', color: '#A55EEA', description: 'System settings' },
                 { id: 'hack', name: 'Hack Tools', icon: 'ri-code-box-fill', color: '#FFA502', description: 'Advanced hacking tools' }
@@ -131,19 +124,13 @@ document.addEventListener('DOMContentLoaded', function () {
             ],
             activeSettingsTab: 'appearance',
             previousApp: null,
-
-            // Custom color variables
             customColor: '#00FF00',
             rgbValues: {
                 r: 0,
                 g: 255,
                 b: 0
             },
-
-            // Custom wallpaper URL variable
             customWallpaperUrl: '',
-
-            // Default phone settings
             defaultPhoneSettings: {
                 wallpaper: 'https://i.imgur.com/SyvMlBc.jpg',
                 frameColor: '#1A1A1A',
@@ -151,7 +138,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 terminalFont: 'monospace',
                 textColor: '#FFFFFF'
             },
-
             products: [
                 {
                     id: 1,
@@ -162,8 +148,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     image: "./assets/img/products/deagle.jpg"
                 }
             ],
-
-            // Language settings
             currentLanguage: 'en',
             languages: [
                 { code: 'en', name: 'English' },
@@ -171,30 +155,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 { code: 'de', name: 'Deutsch' }
             ],
             translations: {},
-
-            nearbyVehicles: [], // Yakındaki araçlar listesi
-            nearestATM: null, // Added for ATM control
-            atmCheckInterval: null, // Added for ATM check interval
-            estimatedLoot: 0, // Tahmini soygun miktarı
-            nearbyATMs: [], // Yakındaki ATM'ler için yeni array
-            isHackingATM: false, // ATM hack işlemi devam ediyor mu kontrolü için
-            robbedATMs: {}, // Soyulmuş ATM ID'lerini tutacak array
-
-            lastVehicleLocation: null, // Last known vehicle location
-            showMarkOnMapButton: false, // Show mark on map button
-
-            // ATM Hack ile ilgili değişkenler
+            nearbyVehicles: [], 
+            nearestATM: null,
+            atmCheckInterval: null, 
+            estimatedLoot: 0, 
+            nearbyATMs: [], 
+            isHackingATM: false, 
+            robbedATMs: {}, 
+            lastVehicleLocation: null, 
+            showMarkOnMapButton: false, 
             activeATMMethod: false,
             atmHackProgress: 0,
             currentATM: null,
-
-            showDoorControls: false, // Kapı kontrollerini göster/gizle
-
-            markedLocation: null, // New variable to store marked location
-            markedVehicle: null, // New variable to store marked vehicle
-
+            showDoorControls: false,
+            markedLocation: null, 
+            markedVehicle: null, 
             transferAmount: 0,
             remainingLoot: 0,
+            showCustomWallpaperModal: false,
+            currentWallpaper: '',
+            defaultWallpaper: 'https://9to5mac.com/wp-content/uploads/sites/6/2024/09/iPhone-16-and-16-Pro-wallpapers-8.jpg?quality=82&strip=all',
         },
 
         computed: {
@@ -225,14 +205,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             handleEventMessage(event) {
                 const data = event.data;
-                
+
                 if (data.data === 'PHONE') {
                     this.ui = data.open;
 
                     if (data.shared && data.shared['Black Market Items']) {
                         this.marketProducts = data.shared['Black Market Items'];
                         
-                        // Kategorileri yükle
                         if (data.shared['Black Market Categories']) {
                             this.categories = data.shared['Black Market Categories'];
                         }
@@ -241,7 +220,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         this.filterProducts();
                     }
                     
-                    // Duvar kağıtlarını yükle
                     if (data.shared && data.shared['Phone Wallpapers']) {
                         this.wallpapers = data.shared['Phone Wallpapers'];
                     }
@@ -250,27 +228,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     this.addTerminalOutput(data.message, data.type);
                     this.forceTerminalScroll();
                 } else if (data.data === 'atmTransferUpdate') {
-                    // ATM soygun ilerlemesini güncelle
                     if (this.isHackingATM && this.nearestATM) {
                         const progress = data.progress || 0;
                         const transferAmount = data.transferAmount || 0;
                         const remainingLoot = data.remainingLoot || this.nearestATM.loot;
-                        
-                        // İlerleme çubuğunu güncelle
                         this.updateProgressBar(progress, transferAmount, remainingLoot);
-                        
-                        // ATM Robbery Progress yazısını güncelle
                         for (let i = 0; i < this.terminalOutput.length; i++) {
                             if (this.terminalOutput[i].text && this.terminalOutput[i].text.startsWith("ATM Robbery Progress:")) {
                                 this.terminalOutput[i].text = `ATM Robbery Progress: ${Math.floor(progress)}%`;
                             }
-                            // Transferred ve Remaining bilgisini de güncelle
                             if (this.terminalOutput[i].text && this.terminalOutput[i].text.startsWith("Transferred:")) {
                                 this.terminalOutput[i].text = `Transferred: $${this.formatMoney(transferAmount)} - Remaining: $${this.formatMoney(remainingLoot)}`;
                             }
                         }
                         
-                        // Her güncelleme sonrası kaydırma işlemini zorla
                         this.$nextTick(() => {
                             this.forceTerminalScroll();
                         });
@@ -290,11 +261,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         this.scanNearbyVehicles(false);
                     }, 1000);
                 } else if (data.data === 'blackmarket:updateItems') {
-                    // Server'dan gelen Black Market ürünlerini güncelle
                     if (data.items && Array.isArray(data.items)) {
                         this.marketProducts = data.items;
                         this.filterProducts();
-                        console.log('Black Market ürünleri güncellendi:', this.marketProducts.length);
                     }
                 } else if (data.data === 'vehicleExploded') {
                     this.addTerminalOutput(`A vehicle exploded!`, 'error');
@@ -303,6 +272,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     setTimeout(() => {
                         this.scanNearbyVehicles(false);
                     }, 1000);
+                }
+
+                if (data.type === "hidePhone") {
+                    this.ui = false;
+                }
+                
+                if (data.type === "showPhone") {
+                    this.ui = true;
+                    this.updateServerTime();
+                    this.updateBatteryLevel();
                 }
             },
 
@@ -325,6 +304,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             screen.style.filter = 'brightness(0)';
                         }, 100);
                     }
+                    document.removeEventListener("keydown", this.onKeydown);
+                    
                     setTimeout(() => {
                         this.ui = false;
                         phoneElement.style.display = 'none';
@@ -347,29 +328,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 this.$set(this.phoneSettings, 'terminalColor', color);
             },
 
-            // Font type change method
             changeTerminalFont(font) {
                 this.$set(this.phoneSettings, 'terminalFont', font);
             },
 
-            // Custom wallpaper setting
             setCustomWallpaper() {
-                if (this.customWallpaperUrl.trim() === '') {
-                    return;
-                }
-                this.$set(this.phoneSettings, 'wallpaper', this.customWallpaperUrl);
-                this.customWallpaperUrl = '';
+                this.showCustomWallpaperModal = true;
+                this.customWallpaperUrl = this.currentWallpaper || '';
             },
 
-            // Wallpaper change method
             changeWallpaper(wallpaper) {
-                this.$set(this.phoneSettings, 'wallpaper', wallpaper);
+                this.currentWallpaper = wallpaper;
+                localStorage.setItem('hackphone_wallpaper', wallpaper);
+                this.showCustomWallpaperModal = false;
             },
 
-            // Save settings to local storage
             saveSettings() {
                 try {
-                    // Save phoneSettings object as a pure object
                     const settingsToSave = {
                         wallpaper: this.phoneSettings.wallpaper,
                         frameColor: this.phoneSettings.frameColor,
@@ -379,15 +354,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     };
 
                     localStorage.setItem('hackerPhoneSettings', JSON.stringify(settingsToSave));
-
-                    // Save VPN settings
                     const vpnSettings = {
                         vpnActive: this.vpnActive,
                         selectedVpnServer: this.selectedVpnServer
                     };
                     localStorage.setItem('hackerPhoneVPN', JSON.stringify(vpnSettings));
 
-                    // Save other settings
                     const otherSettings = {
                         activeSettingsTab: this.activeSettingsTab,
                         customColor: this.customColor,
@@ -396,7 +368,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     };
                     localStorage.setItem('hackerPhoneOtherSettings', JSON.stringify(otherSettings));
 
-                    // Save language settings
                     localStorage.setItem('hackerPhoneLanguage', this.currentLanguage);
 
                     console.log('Settings saved successfully:', settingsToSave);
@@ -405,14 +376,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             },
 
-            // Load settings from local storage
             loadSettings() {
                 try {
-                    // Load phone settings
                     const savedSettings = localStorage.getItem('hackerPhoneSettings');
                     if (savedSettings) {
                         const parsedSettings = JSON.parse(savedSettings);
-                        // Update each setting individually
                         Object.keys(parsedSettings).forEach(key => {
                             if (this.phoneSettings.hasOwnProperty(key)) {
                                 this.$set(this.phoneSettings, key, parsedSettings[key]);
@@ -420,7 +388,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                     }
 
-                    // Load VPN settings
                     const savedVPN = localStorage.getItem('hackerPhoneVPN');
                     if (savedVPN) {
                         const parsedVPN = JSON.parse(savedVPN);
@@ -428,7 +395,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         this.selectedVpnServer = parsedVPN.selectedVpnServer;
                     }
 
-                    // Load other settings
                     const savedOtherSettings = localStorage.getItem('hackerPhoneOtherSettings');
                     if (savedOtherSettings) {
                         const parsedOtherSettings = JSON.parse(savedOtherSettings);
@@ -438,11 +404,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         this.openSubSettings = parsedOtherSettings.openSubSettings || null;
                     }
 
-                    // Load language settings
                     const savedLanguage = localStorage.getItem('hackerPhoneLanguage');
                     if (savedLanguage) {
                         this.currentLanguage = savedLanguage;
                     }
+
+                    // Kayıtlı wallpaper'ı yükle veya varsayılanı kullan
+                    const savedWallpaper = localStorage.getItem('hackphone_wallpaper');
+                    this.currentWallpaper = savedWallpaper || this.defaultWallpaper;
+                    // phoneSettings.wallpaper değerini de güncelle
+                    this.$set(this.phoneSettings, 'wallpaper', this.currentWallpaper);
 
                     console.log('Settings loaded successfully:', this.phoneSettings);
                 } catch (error) {
@@ -454,7 +425,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 this.showCart = !this.showCart;
             },
 
-            // Reset settings method
             resetSettings() {
                 this.$set(this.phoneSettings, 'wallpaper', this.defaultPhoneSettings.wallpaper);
                 this.$set(this.phoneSettings, 'frameColor', this.defaultPhoneSettings.frameColor);
@@ -465,31 +435,28 @@ document.addEventListener('DOMContentLoaded', function () {
             },
 
             lockPhone() {
-                // First close all open apps
                 this.currentApp = null;
                 this.openSubSettings = null;
                 this.previousApp = null;
-
-                // Reset animation variables
                 this.fingerprintSuccess = false;
                 this.fingerprintError = false;
                 this.fingerprintScanning = false;
                 this.fingerprintAttempts = 0;
                 this.lockScreenAnimation = false;
-
-                // Finally lock the phone
                 this.isLocked = true;
             },
 
-            // Lock phone when ESC key is pressed
             onKeydown(event) {
-                // When ESC key (27) is pressed
+                if (!this.ui) return;
                 if (event.keyCode === 27) {
-                    setTimeout(() => {
-                        this.Close();
-                    }, 100);
-                    if (this.isLocked) return;
-                    // If an app is open, close it first
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (this.isLocked) {
+                        setTimeout(() => {
+                            this.Close();
+                        }, 100);
+                        return;
+                    }
                     if (this.currentApp !== null) {
                         this.closeApp();
                         return;
@@ -517,31 +484,28 @@ document.addEventListener('DOMContentLoaded', function () {
             },
 
             openApp(appId) {
-                // Don't open apps if phone is locked
                 if (this.isLocked) {
                     return;
                 }
-
-                // If switching from settings to VPN, save previous app
                 if (appId === 'vpn' && this.currentApp === 'settings') {
                     this.previousApp = 'settings';
                 } else {
                     this.previousApp = null;
                 }
-
                 this.openSubSettings = null;
                 this.currentApp = appId;
+                if (this.$refs.appOpenSound) {
+                    this.$refs.appOpenSound.play();
+                }
             },
 
             closeApp() {
-                // When going back from VPN to settings
                 if (this.currentApp === 'vpn' && this.previousApp === 'settings') {
                     this.currentApp = 'settings';
                     this.previousApp = null;
                     return;
                 }
 
-                // When going back from sub-settings in settings
                 if (this.currentApp === 'settings' && this.openSubSettings !== null) {
                     this.openSubSettings = null;
                     return;
@@ -682,8 +646,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         })
                         .catch(error => {
                             console.error('FiveM event error:', error);
-
-                            // Hata durumunda örnek veriler göster
                             setTimeout(() => {
                                 this.terminalOutput.push('╔════════════════════════════════════════╗');
                                 this.terminalOutput.push('║           VEHICLE SCAN RESULTS         ║');
@@ -698,13 +660,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     this.terminalOutput.push(`Starting GPS tracking for ${vehicleId}...`);
                     this.startGPSTracking();
                 } else if (cmd.startsWith('door ')) {
-                    // Door control
                     if (!this.selectedVehicle) {
                         this.terminalOutput.push('You must first access a vehicle. Use the "vehicle" command.');
                         this.cmdInput = '';
                         return;
                     }
-
                     const doorNumber = parseInt(args[1]);
                     if (isNaN(doorNumber) || doorNumber < 1 || doorNumber > 4) {
                         this.terminalOutput.push('Invalid door number. Please enter a value between 1 and 4.');
@@ -726,11 +686,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             doorType = 'trunk';
                             break;
                     }
-
-                    // Kapı durumunu tersine çevir
                     this.doorStates[doorType] = !this.doorStates[doorType];
-
-                    // FiveM entegrasyonu için event gönderme
                     fetch(`https://${GetParentResourceName()}/vehicleAction`, {
                         method: 'POST',
                         headers: {
@@ -748,19 +704,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     this.terminalOutput.push(`Door ${doorNumber} ${this.doorStates[doorType] ? 'open' : 'closed'}.`);
                 } else if (cmd === 'gps') {
-                    // GPS tracking
                     if (!this.selectedVehicle) {
                         this.terminalOutput.push('You must first access a vehicle. Use the "vehicle" command.');
                         this.cmdInput = '';
                         return;
                     }
-
                     this.terminalOutput.push(`Starting GPS tracking for ${this.selectedVehicle.name}...`);
-
-                    // GPS takibini başlat
                     this.startGPSTracking();
-
-                    // FiveM entegrasyonu için event gönderme
                     fetch(`https://${GetParentResourceName()}/vehicleAction`, {
                         method: 'POST',
                         headers: {
@@ -778,7 +728,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     this.terminalOutput.push(this.t('terminal.unknownCommand'));
                 }
 
-                // Her komut çalıştırıldığında otomatik kaydırma
                 this.$nextTick(() => {
                     const container = this.$refs.terminalOutputContainer;
                     if (container) {
@@ -790,7 +739,6 @@ document.addEventListener('DOMContentLoaded', function () {
             },
 
             generateRandomIP(country) {
-                // Different IP blocks for countries
                 const ipBlocks = {
                     'Turkey': '78.188.',
                     'Germany': '91.198.',
@@ -817,37 +765,27 @@ document.addEventListener('DOMContentLoaded', function () {
                         return;
                     }
 
-                    // Soyulmuş ATM kontrolü - ID bazlı kontrol
                     if (this.nearestATM.isRobbed || this.robbedATMs.includes(this.nearestATM.id)) {
                         this.addTerminalOutput('This ATM has already been robbed!', 'error');
                         return;
                     }
 
                     this.isHackingATM = true;
-                    
-                    // Terminal başlangıç mesajları
                     this.terminalOutput = [];
-                    
-                    // Başlık çerçevesi
+
                     this.addTerminalOutput('╔══════════════════════════════════════════════════╗');
                     this.addTerminalOutput('║                                                  ║');
                     this.addTerminalOutput('║                ATM HACK INITIATED                ║');
                     this.addTerminalOutput('║                                                  ║');
                     this.addTerminalOutput('╚══════════════════════════════════════════════════╝');
-                    
-                    // Hedef bilgileri
                     this.addTerminalOutput(`\nTarget ATM: ${this.nearestATM.location}`, 'info');
                     this.addTerminalOutput(`Target Amount: $${this.formatMoney(this.nearestATM.loot)}\n`, 'info');
-                    
-                    // Başlangıç ilerleme çubuğu
                     this.terminalOutput.push({
                         type: 'system',
                         isProgressBar: true,
                         text: `[${
                             '░'.repeat(40)}] 0%\nTransfer: $0 | Remaining: $${this.formatMoney(this.nearestATM.loot)}`
                     });
-
-                    // ATM soygun isteği gönder
                     fetch(`https://${GetParentResourceName()}/robATM`, {
                         method: 'POST',
                         headers: {
@@ -871,7 +809,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         console.error('ATM hack error:', error);
                     });
                 } else if (type === 'vehicle') {
-                    // Araç erişimi için
                     const vehicle = [
                         { id: 'veh1', name: 'Sultan RS', plate: 'HACK3R', model: 'sultanrs', status: 'Kilitli' },
                         { id: 'veh2', name: 'Kuruma', plate: 'F1V3M', model: 'kuruma', status: 'Açık' },
@@ -1047,7 +984,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     this.vpnConnectionTime++;
                 }, 1000);
 
-                // Data usage counter (more realistic increase)
                 this.vpnDataInterval = setInterval(() => {
                     const randomIncrease = Math.floor(Math.random() * 3) + 1;
                     this.vpnDataUsage += randomIncrease;
@@ -1082,7 +1018,6 @@ document.addEventListener('DOMContentLoaded', function () {
             selectVpnServer(index) {
                 if (this.selectedVpnServer === index) return;
                 this.selectedVpnServer = index;
-                // When server changes, reset counters and restart
                 if (this.vpnActive) {
                     this.stopVPNTimers();
                     this.vpnConnectionTime = 0;
@@ -2847,6 +2782,36 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             },
+
+            // Yeni fonksiyon ekleyin
+            applyCustomWallpaper() {
+                if (this.customWallpaperUrl && this.customWallpaperUrl.trim() !== '') {
+                    // Özel URL'yi hem currentWallpaper hem de phoneSettings.wallpaper'a ayarla
+                    this.currentWallpaper = this.customWallpaperUrl;
+                    this.$set(this.phoneSettings, 'wallpaper', this.customWallpaperUrl);
+                    
+                    // Ayarları localStorage'a kaydet
+                    localStorage.setItem('hackphone_wallpaper', this.customWallpaperUrl);
+                    this.saveSettings();
+                    
+                    // Input alanını temizle
+                    this.customWallpaperUrl = '';
+                    
+                    // Modalı kapat
+                    this.showCustomWallpaperModal = false;
+                } else {
+                    // Boş URL gelirse varsayılan arka planı kullan
+                    this.currentWallpaper = this.defaultWallpaper;
+                    this.$set(this.phoneSettings, 'wallpaper', this.defaultWallpaper);
+                    localStorage.setItem('hackphone_wallpaper', this.defaultWallpaper);
+                    this.saveSettings();
+                }
+            },
+
+            // Yeni fonksiyon ekleyin
+            cancelCustomWallpaper() {
+                this.showCustomWallpaperModal = false;
+            },
         },
 
         watch: {
@@ -2894,57 +2859,35 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         mounted() {
-            this.loadLanguagePreference();
             this.loadSettings();
-            this.updateServerTime();
             this.updateBatteryLevel();
-            this.filterProducts();
-
-            // When page loads, filter products
-            this.filteredProducts = this.marketProducts;
+            this.loadLanguagePreference();
             
-            // ATM soygun tamamlandı event listener'ı
-            window.addEventListener('message', (event) => {
-                if (event.data.data === 'atmRobComplete') {
-                    const amount = event.data.amount;
-                    const atmId = event.data.atmId;
-                    
-                    if (amount && atmId) {
-                        // Sunucuya para miktarını gönder
-                        fetch(`https://${GetParentResourceName()}/Robery`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                amount: amount,
-                                atmId: atmId
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                this.addTerminalOutput(data.message || 'Money added to your account!', 'success');
-                            } else {
-                                this.addTerminalOutput(data.message || 'Error occurred during money transfer!', 'error');
-                            }
-                            this.forceTerminalScroll();
-                        })
-                        .catch(error => {
-                            console.error('Error sending robbery data:', error);
-                            this.addTerminalOutput('Error occurred during money transfer!', 'error');
-                            this.forceTerminalScroll();
-                        });
-                    }
-                }
-            });
+            // Saat güncelleme
+            this.updateServerTime();
             
-            // İlerleme çubuğu için event listener ekle
-            window.addEventListener('message', (event) => {
-                if (event.data && event.data.data === 'atmTransferUpdate') {
-                    console.log("ATM Transfer Update Event:", event.data);
-                }
-            });
+            // Terminal setup
+            this.initializeTerminalOutput();
+            
+            // Sadece telefon aktifken keydown eventini dinle
+            document.addEventListener("keydown", this.onKeydown);
+            
+            window.addEventListener('message', this.handleEventMessage);
+        },
+        
+        beforeDestroy() {
+            // Component yok edilmeden önce event listener'ları temizle
+            document.removeEventListener("keydown", this.onKeydown);
+            window.removeEventListener('message', this.handleEventMessage);
+            
+            // Zamanlayıcıları durdur
+            this.stopVPNTimers();
+            this.stopGPSTracking();
+            
+            // Diğer zamanlayıcıları temizle
+            if (this.atmCheckInterval) {
+                clearInterval(this.atmCheckInterval);
+            }
         },
 
         created() {
@@ -2953,16 +2896,6 @@ document.addEventListener('DOMContentLoaded', function () {
             window.addEventListener('message', this.handleEventMessage);
             document.addEventListener("keydown", this.onKeydown);
             this.loadRobbedATMs(); // Soyulmuş ATM'leri yükle
-        },
-
-        beforeDestroy() {
-            window.removeEventListener('message', this.handleEventMessage);
-            document.removeEventListener("keydown", this.onKeydown);
-            this.stopVPNTimers();
-            this.stopGPSTracking(); // GPS takibini durdur
-            if (this.atmCheckInterval) {
-                clearInterval(this.atmCheckInterval);
-            }
         }
     });
 });
