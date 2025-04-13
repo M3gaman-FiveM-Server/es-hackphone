@@ -15,9 +15,9 @@ Config = {
         Label = "Weapon Dealer"
     },
 
-    UseItem = false, -- Enable/disable using items to open phone
+    UseItem = true, -- Enable/disable using items to open phone
     ItemName = "hackphone", -- Item name required to open phone if UseItem is true
-    OpenKey = 'I', -- Key to open phone when UseItem is true and player has the required item
+    OpenKey = 'J', -- Key to open phone when UseItem is true and player has the required item
 
     ['Phone Wallpapers'] = {
       'https://i.pinimg.com/originals/eb/42/9d/eb429d3a85e9ab08d5636c07c137f765.jpg',
